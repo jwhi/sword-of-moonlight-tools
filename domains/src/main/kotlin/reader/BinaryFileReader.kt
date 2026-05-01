@@ -33,9 +33,17 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
     // EVT Definition
     val systemEvent = this.toEvtDefinition(4)
     val firstEvent = this.toEvtDefinition(0x9DC)
+    val manAfterHelpingDwarf = this.toEvtDefinition(0xAD8)
+    val manBeforeDwarf = this.toEvtDefinition(0xBD4)
+    val banditEvent = this.toEvtDefinition(0xCD0)
+    val dwarfTalking = this.toEvtDefinition(0xDCC)
     return listOf(
         systemEvent,
-        firstEvent
+        firstEvent,
+        manAfterHelpingDwarf,
+        manBeforeDwarf,
+        banditEvent,
+        dwarfTalking
     )
 }
 
@@ -45,12 +53,10 @@ fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
     val nameInput = ByteArrayInputStream(nameBytes)
     val nameWithNullChars = nameInput.bufferedReader().use { it.readText() }
     val name = nameWithNullChars.trim(0x00.toChar())
-    println(name)
 
     val targetTypeByteLocation = nameEnd + 1
     val targetTypeByte = this.get(targetTypeByteLocation)
     val targetType = TargetType.from(targetTypeByte)
-    println(targetType)
 
     val targetIdLocation = targetTypeByteLocation + 1
     val targetId = this.getShort(targetIdLocation)
@@ -66,13 +72,16 @@ fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
     val triggerCone = this.getUShort(triggerConeByteLocation)
 
     // u16 u16x26; Padding ?
-    val triggerRectWEByteLocation = triggerConeByteLocation + 1 + (2 * 22) + 1
+    val paddingLocationStart = triggerConeByteLocation + 1
+    val paddingLocationEnd = paddingLocationStart + (2 * 22)
+    val padding = this.slice(paddingLocationStart..paddingLocationEnd).map { it.toUByte() }
+
+    val triggerRectWEByteLocation = paddingLocationEnd + 1
     val triggerRectWE = this.getFloat(triggerRectWEByteLocation)
 
 
     val triggerRectNSByteLocation = triggerRectWEByteLocation + 3
     val triggerRectNS = this.getFloat(triggerRectNSByteLocation)
-    println(triggerRectNS)
 
     val triggerRadiusByteLocation = triggerRectNSByteLocation + 3
     val triggerRadius = this.getFloat(triggerRadiusByteLocation)
@@ -110,7 +119,7 @@ fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
         triggerType = triggerType,
         triggerItem = triggerItem,
         triggerCone = triggerCone,
-        padding = emptyList(),
+        padding = padding,
         triggerRectWE = triggerRectWE,
         triggerRectNS = triggerRectNS,
         triggerRadius = triggerRadius,
