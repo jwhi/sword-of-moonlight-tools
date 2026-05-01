@@ -1,12 +1,17 @@
 package com.jwhi.som.domains.reader
 
 import com.jwhi.som.domains.InvalidEvtException
+import com.jwhi.som.domains.evt.CompareType
+import com.jwhi.som.domains.evt.ComparisonType
+import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtDefinition
 import com.jwhi.som.domains.evt.EvtHeader
+import com.jwhi.som.domains.evt.EvtPage
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
 import com.jwhi.som.domains.helpers.getFloat
 import com.jwhi.som.domains.helpers.getUByte
+import com.jwhi.som.domains.helpers.getUInt
 import com.jwhi.som.domains.helpers.getUShort
 import java.io.ByteArrayInputStream
 
@@ -25,7 +30,8 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
     }
 
     // EVT Definition
-    val nameStart = 4
+    // val nameStart = 4
+    val nameStart = 2776
     val nameEnd = nameStart + 30
     val nameBytes = this.sliceArray(nameStart..nameEnd)
     val nameInput = ByteArrayInputStream(nameBytes)
@@ -56,13 +62,49 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
     println(triggerCone)
 
     // u16 u16x26; Padding ?
-    val triggerRectWEByteLocation = triggerConeByteLocation + 1 + (2 * 26) + 1
-    val triggerRectWEBytes = this.getFloat(triggerRectWEByteLocation)
-    println(triggerRectWEBytes)
+    val triggerRectWEByteLocation = triggerConeByteLocation + 1 + (2 * 22) + 1
+    val triggerRectWE = this.getFloat(triggerRectWEByteLocation)
+    println(triggerRectWE)
 
 
+    val triggerRectNSByteLocation = triggerRectWEByteLocation + 3
+    val triggerRectNS = this.getFloat(triggerRectNSByteLocation)
+    println(triggerRectNS)
 
+    val triggerRadiusByteLocation = triggerRectNSByteLocation + 3
+    val triggerRadius = this.getFloat(triggerRadiusByteLocation)
+    println(triggerRadius)
 
+    val evtConditionStart = triggerRadiusByteLocation + 3
+    val condition = EvtCondition(
+        compareType = CompareType.from(
+            this.getUShort(evtConditionStart)
+        ),
+        compareId = this.getUShort(evtConditionStart + 2),
+        comparedValue = this.getUShort(evtConditionStart + 4),
+        comparisonType = ComparisonType.from(
+            this.getUShort(evtConditionStart + 6)
+        )
+    )
+    println(condition)
+
+    val evtPageStart = evtConditionStart + 8
+    val evtPage = EvtPage(
+        payloadOffset = this.getUInt(evtPageStart),
+        startCondition = EvtCondition(
+            compareType = CompareType.from(
+                this.getUShort(evtPageStart + 4)
+            ),
+            compareId = this.getUShort(evtPageStart + 6),
+            comparedValue = this.getUShort(evtPageStart + 8),
+            comparisonType = ComparisonType.from(
+                this.getUShort(evtPageStart + 10)
+            )
+        )
+    )
+    println(evtPage)
+    val nextPageStart = evtPageStart + 12
+    println(this.sliceArray(nextPageStart .. nextPageStart + 50).contentToString())
 
     return events
 }
