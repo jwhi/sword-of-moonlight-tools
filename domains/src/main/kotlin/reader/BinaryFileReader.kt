@@ -10,6 +10,7 @@ import com.jwhi.som.domains.evt.EvtPage
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
 import com.jwhi.som.domains.helpers.getFloat
+import com.jwhi.som.domains.helpers.getShort
 import com.jwhi.som.domains.helpers.getUByte
 import com.jwhi.som.domains.helpers.getUInt
 import com.jwhi.som.domains.helpers.getUShort
@@ -30,10 +31,17 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
     }
 
     // EVT Definition
-    // val nameStart = 4
-    val nameStart = 2776
-    val nameEnd = nameStart + 30
-    val nameBytes = this.sliceArray(nameStart..nameEnd)
+    val systemEvent = this.toEvtDefinition(4)
+    val firstEvent = this.toEvtDefinition(0x9DC)
+    return listOf(
+        systemEvent,
+        firstEvent
+    )
+}
+
+fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
+    val nameEnd = offset + 30
+    val nameBytes = this.sliceArray(offset..nameEnd)
     val nameInput = ByteArrayInputStream(nameBytes)
     val nameWithNullChars = nameInput.bufferedReader().use { it.readText() }
     val name = nameWithNullChars.trim(0x00.toChar())
@@ -45,26 +53,21 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
     println(targetType)
 
     val targetIdLocation = targetTypeByteLocation + 1
-    val targetId = this.getUShort(targetIdLocation)
-    println(targetId)
+    val targetId = this.getShort(targetIdLocation)
 
     val triggerTypeByteLocation = targetIdLocation + 2
     val triggerTypeByte = this.getUByte(triggerTypeByteLocation)
     val triggerType = TriggerType.from(triggerTypeByte)
-    println(triggerType)
 
     val triggerItemByteLocation = triggerTypeByteLocation + 1
-    val triggerItemByte = this.getUByte(triggerItemByteLocation)
-    println(triggerItemByte)
+    val triggerItem = this.getUByte(triggerItemByteLocation)
 
     val triggerConeByteLocation = triggerItemByteLocation + 1
     val triggerCone = this.getUShort(triggerConeByteLocation)
-    println(triggerCone)
 
     // u16 u16x26; Padding ?
     val triggerRectWEByteLocation = triggerConeByteLocation + 1 + (2 * 22) + 1
     val triggerRectWE = this.getFloat(triggerRectWEByteLocation)
-    println(triggerRectWE)
 
 
     val triggerRectNSByteLocation = triggerRectWEByteLocation + 3
@@ -73,7 +76,6 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
 
     val triggerRadiusByteLocation = triggerRectNSByteLocation + 3
     val triggerRadius = this.getFloat(triggerRadiusByteLocation)
-    println(triggerRadius)
 
     val evtConditionStart = triggerRadiusByteLocation + 3
     val condition = EvtCondition(
@@ -86,7 +88,6 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
             this.getUShort(evtConditionStart + 6)
         )
     )
-    println(condition)
 
     val evtPageStart = evtConditionStart + 8
     val evtPage = EvtPage(
@@ -102,9 +103,18 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
             )
         )
     )
-    println(evtPage)
-    val nextPageStart = evtPageStart + 12
-    println(this.sliceArray(nextPageStart .. nextPageStart + 50).contentToString())
-
-    return events
+    return EvtDefinition(
+        name = name,
+        targetType = targetType,
+        targetId = targetId,
+        triggerType = triggerType,
+        triggerItem = triggerItem,
+        triggerCone = triggerCone,
+        padding = emptyList(),
+        triggerRectWE = triggerRectWE,
+        triggerRectNS = triggerRectNS,
+        triggerRadius = triggerRadius,
+        condition = condition,
+        pages = listOf(evtPage)
+    )
 }

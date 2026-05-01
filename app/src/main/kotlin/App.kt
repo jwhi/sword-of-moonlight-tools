@@ -5,7 +5,7 @@ import com.jwhi.som.domains.reader.toMapEvents
 
 fun main() {
     val fileReader = ExampleReader()
-    val evt00Bytes = fileReader.binaryFileReader("/example/00.evt")
+    val evt00Bytes = fileReader.binaryFileReader("/ExampleProject/DATA/MAP/00.evt")
     val evt00 = evt00Bytes.toMapEvents()
     println(evt00)
 }
