@@ -7,7 +7,11 @@ package com.jwhi.som.domains.evt
 data class EvtHeader(
     // Number of events in the EVT file (always 1024)
     val eventCount: UInt
-)
+) {
+    companion object {
+        val BYTE_HEADER: List<Byte> = listOf(0x00, 0x04, 0x00, 0x00)
+    }
+}
 
 /**
  * Condition Mode.

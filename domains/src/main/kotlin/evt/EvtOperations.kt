@@ -65,7 +65,8 @@ data class EvtOpChangeCounter(
     val value: UShort,
     // A counter to get the value from
     val targetCounter: UShort,
-    // When 0 = use exact value, when 1 = use value from targetCounter
+    // When 0 = use exact value,
+    // when 1 = use value from targetCounter
     val useTarget: Boolean,
     val mode: EvtOpCounterMode,
     val padding: UShort,
@@ -81,7 +82,8 @@ data class EvtOpChangePage(
     // opID = 145, opSize = variable
     val opId: Short = 145,
     val op: EvtOpCode,
-    // 0x000 -> 0x3FF = other, 0xFFFF = self
+    // 0x000 -> 0x3FF = other,
+    // 0xFFFF = self
     val target: Short,
     val changeType: EvtOpChangePageType,
     // ID to use when changeType == 2 (0 - 15)
