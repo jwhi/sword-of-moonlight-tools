@@ -30,7 +30,12 @@ enum class CompareType(val value: UShort) {
     STRENGTH(3u),
     MAGIC(4u),
     LEVEL(5u),
-    COUNTER(6u)
+    COUNTER(6u);
+
+    companion object {
+        private val mapping = entries.associateBy(CompareType::value)
+        fun from(value: UShort) = mapping[value]!! // Or default to ?: NONE
+    }
 }
 
 // 0 = Equals
@@ -41,7 +46,12 @@ enum class ComparisonType(val value: UShort) {
     EQUALS(0u),
     NOT_EQUALS(1u),
     GREATER_THAN(2u),
-    LESS_THAN(3u)
+    LESS_THAN(3u);
+
+    companion object {
+        private val mapping = ComparisonType.entries.associateBy(ComparisonType::value)
+        fun from(value: UShort) = mapping[value]!! // Or default to something
+    }
 }
 
 data class EvtCondition(
@@ -70,7 +80,12 @@ enum class TargetType(val value: Byte) {
     ENEMY(1),
     OBJECT(2),
     SYSTEM(-2),
-    NONE(-1)
+    NONE(-1);
+
+    companion object {
+        private val mapping = TargetType.entries.associateBy(TargetType::value)
+        fun from(value: Byte) = mapping[value]!! // Or default to ?: NONE
+    }
 }
 
 // 0x01 = Examine
@@ -80,6 +95,7 @@ enum class TargetType(val value: Byte) {
 // 0x10 = Death (Enemy/NPC)
 // 0x20 = Always On
 // 0x40 = Use Item
+// 0x00 = None
 enum class TriggerType(val value: UByte) {
     EXAMINE(0x01u),
     USE_ITEM(0x02u),
@@ -88,6 +104,12 @@ enum class TriggerType(val value: UByte) {
     DEATH_ENEMY_NPC(0x10u),
     ALWAYS_ON(0x20u),
     USE_ITEM_(0x40u),
+    NONE(0x00u);
+
+    companion object {
+        private val mapping = TriggerType.entries.associateBy(TriggerType::value)
+        fun from(value: UByte) = mapping[value]!! // Or default to something
+    }
 }
 
 data class EvtDefinition(
