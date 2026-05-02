@@ -176,8 +176,8 @@ display greeting
 
 ### 0016 Circ Event 1
 
-Start Condition: None
-Trigger When: Approach Circle
+* Start Condition: None
+* Trigger When: Approach Circle
 
 Circle Size:
 * Radius: 2.5
