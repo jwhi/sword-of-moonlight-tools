@@ -32,5 +32,7 @@ enum class EvtPageOffsets(val byte: Byte) {
 
 enum class EvtPageDataOffsets(val byte: Byte) {
     OPERATION_TYPE(0x00),
-    OPERATION_SIZE(0x02)
+    OPERATION_SIZE(0x02);
+
+    fun intOffset() = this.byte.toInt()
 }

@@ -7,11 +7,14 @@ import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtDefinition
 import com.jwhi.som.domains.evt.EvtHeader
 import com.jwhi.som.domains.evt.EvtOffsets
+import com.jwhi.som.domains.evt.EvtOpDisplayMessage
+import com.jwhi.som.domains.evt.EvtOperation
+import com.jwhi.som.domains.evt.EvtOpUnimplemented
 import com.jwhi.som.domains.evt.EvtPage
+import com.jwhi.som.domains.evt.EvtPageDataOffsets
 import com.jwhi.som.domains.evt.EvtPageOffsets
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
-import com.jwhi.som.domains.helpers.getByte
 import com.jwhi.som.domains.helpers.getFloat
 import com.jwhi.som.domains.helpers.getShort
 import com.jwhi.som.domains.helpers.getUByte
@@ -42,10 +45,7 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
 }
 
 fun ByteArray.toEvtDefinition(offset: Int = 0): EvtDefinition {
-    val nameBytes = this.getBytes(offset + EvtOffsets.NAME.intOffset(), 0x1E)
-    val nameInput = ByteArrayInputStream(nameBytes)
-    val nameWithNullChars = nameInput.bufferedReader().use { it.readText() }
-    val name = nameWithNullChars.trim(0x00.toChar())
+    val name = this.readString(offset + EvtOffsets.NAME.intOffset(), 0x1E)
 
     val targetTypeByte = this[offset + EvtOffsets.TARGET_TYPE.intOffset()]
     val targetType = TargetType.from(targetTypeByte)
@@ -108,10 +108,31 @@ fun ByteArray.toEvtDefinition(offset: Int = 0): EvtDefinition {
     )
 }
 
-fun ByteArray.getEvtOperation(offset: UInt) -> EvtOperation {
-
+fun ByteArray.getEvtOperation(offset: UInt): EvtOperation {
+    val opId = this.getUShort(offset.toInt() + EvtPageDataOffsets.OPERATION_TYPE.byte)
+    val opSize = this.getUShort(offset.toInt() + EvtPageDataOffsets.OPERATION_SIZE.byte)
+    val bytes = this.getBytes(offset.toInt() + EvtPageDataOffsets.OPERATION_TYPE.intOffset(), opSize.toInt())
+    return when(opId) {
+        0.toUShort() -> EvtOpDisplayMessage(
+            opId = opId,
+            opSize = opSize,
+            text = "Not implemented",
+            bytes = bytes.toList()
+        )
+        else -> EvtOpUnimplemented(
+            opId = opId,
+            opSize = opSize,
+            bytes = bytes.toList()
+        )
+    }
 }
 
-fun ByteArray.getBytes(offsets: Int, size: Int): ByteArray {
-    return this.sliceArray(offsets..< offsets + size)
+fun ByteArray.getBytes(offset: Int, size: Int): ByteArray {
+    return this.sliceArray(offset..< offset + size)
+}
+
+fun ByteArray.readString(offset: Int, size: Int): String {
+    return ByteArrayInputStream(this.getBytes(offset, size))
+        .bufferedReader().use { it.readText() }
+        .trim(0x00.toChar())
 }

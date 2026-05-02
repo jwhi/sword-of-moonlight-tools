@@ -14,15 +14,17 @@ interface EvtOperation {
 
     // Size of the operation (including the EVT_OPCODE.)
     val opSize: UShort
+    // Debug to view and validate bytes
+    val bytes: List<Byte>
 }
 
 data class EvtOpDisplayMessage(
     // opID = 0, opSize = variable
     override val opId: UShort = 0u,
     override val opSize: UShort,
-    // Length is opSize - 8
+    // Length is opSize - 4 bytes
     val text: String,
-    val padding: UInt
+    override val bytes: List<Byte> = emptyList()
 ): EvtOperation
 
 data class EvtOpDisplayMessageFormat(
@@ -38,7 +40,8 @@ data class EvtOpDisplayMessageFormat(
     val textTerminator: UByte,
     val fontName: String,
     val fontNameTerminator: UByte,
-    val padding2: UByte
+    val padding2: UByte,
+    override val bytes: List<Byte> = emptyList()
 ): EvtOperation
 
 // 0 = Set To, 1 = Increment By, 2 = Decrement By
@@ -73,6 +76,7 @@ data class EvtOpChangeCounter(
     val useTarget: Boolean,
     val mode: EvtOpCounterMode,
     val padding: UShort,
+    override val bytes: List<Byte> = emptyList()
 ): EvtOperation
 
 // 0 = Forward, 1 = Back, 2 = Specific
@@ -91,9 +95,18 @@ data class EvtOpChangePage(
     val changeType: EvtOpChangePageType,
     // ID to use when changeType == 2 (0 - 15)
     val changeSpecificId: UByte,
+    override val bytes: List<Byte> = emptyList()
 ): EvtOperation
 
+data class EvtOpUnimplemented(
+    override val opId: UShort,
+    override val opSize: UShort,
+    override val bytes: List<Byte>
+): EvtOperation
+
+/*
 data class EvtOpReturn(
     // opID = -1, opSize = 4
     val op: EvtOpCode = EvtOpCode(-1, 4u),
 ): EvtOperation
+*/
