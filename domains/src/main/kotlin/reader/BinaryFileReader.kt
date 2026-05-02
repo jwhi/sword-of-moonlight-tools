@@ -1,6 +1,7 @@
 package com.jwhi.som.domains.reader
 
 import com.jwhi.som.domains.InvalidEvtException
+import com.jwhi.som.domains.custom.MapEvent
 import com.jwhi.som.domains.evt.CompareType
 import com.jwhi.som.domains.evt.ComparisonType
 import com.jwhi.som.domains.evt.EvtCondition
@@ -28,7 +29,17 @@ class ExampleReader {
     }
 }
 
-fun ByteArray.toMapEvents(): List<EvtDefinition> {
+fun ByteArray.toMapEvent(): List<MapEvent> {
+    val evtDefinitions = this.toEvtDefinitions()
+    return evtDefinitions.map {
+        MapEvent(
+            definition = it,
+            pageOperations = it.pages.associate { it.payloadOffset to this.getEvtOperation(it.payloadOffset) }
+        )
+    }
+}
+
+fun ByteArray.toEvtDefinitions(): List<EvtDefinition> {
     this.sliceArray(0..3).let {
         if (!it.contentEquals(EvtHeader.BYTE_HEADER.toByteArray())) {
             throw InvalidEvtException("Invalid header. Expected ${EvtHeader.BYTE_HEADER} but was ${it.contentToString()}")
