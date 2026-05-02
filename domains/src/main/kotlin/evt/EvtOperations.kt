@@ -8,26 +8,27 @@ package com.jwhi.som.domains.evt
  * These are what is stored at the payloadOffset within an EVT_PAGE.
  *
  */
-data class EvtOpCode(
+interface EvtOperation {
     // Operation ID. See operation definitions below for valid/known values.
-    val opID: Short,
+    val opId: UShort
+
     // Size of the operation (including the EVT_OPCODE.)
-    val opSize: UShort,
-)
+    val opSize: UShort
+}
 
 data class EvtOpDisplayMessage(
     // opID = 0, opSize = variable
-    val opId: Short = 0,
-    val op: EvtOpCode,
+    override val opId: UShort = 0u,
+    override val opSize: UShort,
     // Length is opSize - 8
     val text: String,
     val padding: UInt
-)
+): EvtOperation
 
 data class EvtOpDisplayMessageFormat(
     // opID = 1, opSize = variable
-    val opId: Short = 1,
-    val op: EvtOpCode,
+    override val opId: UShort = 1u,
+    override val opSize: UShort,
     // RGBX format (8-bits per component)
     val textColour: UInt,
     // GDI font weight (0-550 = Normal, 551-999 Bold)
@@ -38,7 +39,7 @@ data class EvtOpDisplayMessageFormat(
     val fontName: String,
     val fontNameTerminator: UByte,
     val padding2: UByte
-)
+): EvtOperation
 
 // 0 = Set To, 1 = Increment By, 2 = Decrement By
 enum class EvtOpCounterMode(val value: UByte) {
@@ -60,7 +61,9 @@ enum class EvtOpCounterMode(val value: UByte) {
 */
 data class EvtOpChangeCounter(
     // opID = 144, opSize = 12
-    val op: EvtOpCode = EvtOpCode(144, 12u),
+    // 0x90 0x00
+    override val opId: UShort = 144u,
+    override val opSize: UShort = 12u,
     // A exact value to use
     val value: UShort,
     // A counter to get the value from
@@ -70,7 +73,7 @@ data class EvtOpChangeCounter(
     val useTarget: Boolean,
     val mode: EvtOpCounterMode,
     val padding: UShort,
-)
+): EvtOperation
 
 // 0 = Forward, 1 = Back, 2 = Specific
 enum class EvtOpChangePageType(val value: UByte) {
@@ -80,17 +83,17 @@ enum class EvtOpChangePageType(val value: UByte) {
 }
 data class EvtOpChangePage(
     // opID = 145, opSize = variable
-    val opId: Short = 145,
-    val op: EvtOpCode,
+    override val opId: UShort = 145u,
+    override val opSize: UShort,
     // 0x000 -> 0x3FF = other,
     // 0xFFFF = self
     val target: Short,
     val changeType: EvtOpChangePageType,
     // ID to use when changeType == 2 (0 - 15)
     val changeSpecificId: UByte,
-)
+): EvtOperation
 
 data class EvtOpReturn(
     // opID = -1, opSize = 4
     val op: EvtOpCode = EvtOpCode(-1, 4u),
-)
+): EvtOperation

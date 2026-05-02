@@ -108,6 +108,10 @@ fun ByteArray.toEvtDefinition(offset: Int = 0): EvtDefinition {
     )
 }
 
+fun ByteArray.getEvtOperation(offset: UInt) -> EvtOperation {
+
+}
+
 fun ByteArray.getBytes(offsets: Int, size: Int): ByteArray {
     return this.sliceArray(offsets..< offsets + size)
 }

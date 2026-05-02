@@ -6,7 +6,7 @@ package com.jwhi.som.domains.evt
  */
 data class EvtHeader(
     // Number of events in the EVT file (always 1024)
-    val eventCount: UInt
+    val magicBytes: UInt
 ) {
     companion object {
         val BYTE_HEADER: List<Byte> = listOf(0x00, 0x04, 0x00, 0x00)
@@ -62,7 +62,7 @@ data class EvtCondition(
     // When compareType == 6 (Counter):
     // 0x0000->0x3FF = Counter ID
     val compareId: UShort,
-    // The value to check against in various modes (signed?..)
+    // The value to check against in various modes. Not allowed to be negative
     val comparedValue: UShort,
     val comparisonType: ComparisonType
 )
