@@ -26,36 +26,22 @@ class ExampleReader {
 }
 
 fun ByteArray.toMapEvents(): List<EvtDefinition> {
-    val events = mutableListOf<EvtDefinition>()
     this.sliceArray(0..3).let {
         if (!it.contentEquals(EvtHeader.BYTE_HEADER.toByteArray())) {
             throw InvalidEvtException("Invalid header. Expected ${EvtHeader.BYTE_HEADER} but was ${it.contentToString()}")
         }
     }
 
-    // EVT Definition
-    val systemEvent = this.toEvtDefinition(0x04)
-    val firstEvent = this.toEvtDefinition(0x9DC)
-    val manAfterHelpingDwarf = this.toEvtDefinition(0xAD8)
-    val manBeforeDwarf = this.toEvtDefinition(0xBD4)
-    val banditEvent = this.toEvtDefinition(0xCD0)
-    val dwarfTalking = this.toEvtDefinition(0xDCC)
-    val rectTest1 = this.toEvtDefinition(0xEC8)
-    val circEvent1 = this.toEvtDefinition(0xFC4)
-
-    return listOf(
-        systemEvent,
-        firstEvent,
-        manAfterHelpingDwarf,
-        manBeforeDwarf,
-        banditEvent,
-        dwarfTalking,
-        rectTest1,
-        circEvent1,
-    )
+    val initialStart = 0x04
+    val events =  (1..251).map {
+        val evtStart = initialStart + (it * 0xFC)
+        val evtBytes = this.getBytes(evtStart, 0xFC)
+        evtBytes.toEvtDefinition()
+    }
+    return events
 }
 
-fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
+fun ByteArray.toEvtDefinition(offset: Int = 0): EvtDefinition {
     val nameBytes = this.getBytes(offset + EvtOffsets.NAME.intOffset(), 0x1E)
     val nameInput = ByteArrayInputStream(nameBytes)
     val nameWithNullChars = nameInput.bufferedReader().use { it.readText() }
