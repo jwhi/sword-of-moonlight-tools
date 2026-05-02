@@ -31,19 +31,29 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
     }
 
     // EVT Definition
-    val systemEvent = this.toEvtDefinition(4)
-    val firstEvent = this.toEvtDefinition(0x9DC)
-    val manAfterHelpingDwarf = this.toEvtDefinition(0xAD8)
-    val manBeforeDwarf = this.toEvtDefinition(0xBD4)
-    val banditEvent = this.toEvtDefinition(0xCD0)
-    val dwarfTalking = this.toEvtDefinition(0xDCC)
-    return listOf(
+    // val systemEvent = this.toEvtDefinition(4)
+    // val firstEvent = this.toEvtDefinition(0x9DC)
+    // val manAfterHelpingDwarf = this.toEvtDefinition(0xAD8)
+    // val manBeforeDwarf = this.toEvtDefinition(0xBD4)
+    // val banditEvent = this.toEvtDefinition(0xCD0)
+    // val dwarfTalking = this.toEvtDefinition(0xDCC)
+    val rectTest1 = this.toEvtDefinition(0xEC8)
+    val circEvent1 = this.toEvtDefinition(0xFC4)
+    /*
+    listOf(
         systemEvent,
         firstEvent,
         manAfterHelpingDwarf,
         manBeforeDwarf,
         banditEvent,
-        dwarfTalking
+        dwarfTalking,
+        rectTest1,
+        circEvent1,
+    )
+     */
+    return listOf(
+        rectTest1,
+        circEvent1
     )
 }
 
@@ -73,17 +83,25 @@ fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
 
     // u16 u16x26; Padding ?
     val paddingLocationStart = triggerConeByteLocation + 1
-    val paddingLocationEnd = paddingLocationStart + (2 * 22)
+    val paddingLocationEnd = paddingLocationStart + 2
     val padding = this.slice(paddingLocationStart..paddingLocationEnd).map { it.toUByte() }
 
+    // 1045 TOO LARGE
+    // RECT FLOAT: 3821 (EF0) IS ACTUAL
     val triggerRectWEByteLocation = paddingLocationEnd + 1
+    val triggerRectWEBytes = this.sliceArray(triggerRectWEByteLocation..triggerRectWEByteLocation + 4)
+    println(triggerRectWEBytes.decodeToString())
     val triggerRectWE = this.getFloat(triggerRectWEByteLocation)
 
 
-    val triggerRectNSByteLocation = triggerRectWEByteLocation + 3
+    val triggerRectNSByteLocation = triggerRectWEByteLocation + 4
+    val triggerRectNSBytes = this.sliceArray(triggerItemByteLocation.. triggerItemByteLocation + 4)
+    println(triggerRectNSBytes.decodeToString())
     val triggerRectNS = this.getFloat(triggerRectNSByteLocation)
 
-    val triggerRadiusByteLocation = triggerRectNSByteLocation + 3
+    val triggerRadiusByteLocation = triggerRectNSByteLocation + 4
+    val triggerRadiusBytes = this.sliceArray(triggerRadiusByteLocation..triggerRadiusByteLocation + 4)
+    println(triggerRadiusBytes.decodeToString())
     val triggerRadius = this.getFloat(triggerRadiusByteLocation)
 
     val evtConditionStart = triggerRadiusByteLocation + 3

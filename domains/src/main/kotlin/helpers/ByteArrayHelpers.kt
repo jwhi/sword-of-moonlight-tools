@@ -1,6 +1,7 @@
 package com.jwhi.som.domains.helpers
 
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 // Pulled from https://github.com/mvysny/kotlin-unsigned-jvm
 
@@ -275,6 +276,6 @@ fun ByteArray.getFloat(byteOffset: Int): Float {
     // Source - https://stackoverflow.com/a/44068170
     // Posted by hotkey
     // Retrieved 2026-05-01, License - CC BY-SA 3.0
-    val buffer = ByteBuffer.wrap(this)
+    val buffer = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN)
     return buffer.getFloat(byteOffset)
 }
