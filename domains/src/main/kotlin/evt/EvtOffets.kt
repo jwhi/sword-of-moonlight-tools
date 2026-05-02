@@ -15,7 +15,9 @@ enum class EvtOffsets(val byte: Byte) {
     CHECK_TARGET_ID(0x36),
     COMPARISON_VALUE(0x38),
     COMPARISON_TYPE(0x3A),
-    PAGES_START(0x3C)
+    PAGES_START(0x3C);
+
+    fun intOffset() = this.byte.toInt()
 }
 
 enum class EvtPageOffsets(val byte: Byte) {
@@ -23,7 +25,9 @@ enum class EvtPageOffsets(val byte: Byte) {
     CHECK_TYPE(0x04),
     CHECK_TARGET_ID(0x06),
     COMPARISON_VALUE(0x08),
-    COMPARISON_TYPE(0x10)
+    COMPARISON_TYPE(0x10);
+
+    fun intOffset() = this.byte.toInt()
 }
 
 enum class EvtPageDataOffsets(val byte: Byte) {

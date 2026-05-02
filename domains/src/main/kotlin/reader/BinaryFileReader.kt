@@ -6,9 +6,12 @@ import com.jwhi.som.domains.evt.ComparisonType
 import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtDefinition
 import com.jwhi.som.domains.evt.EvtHeader
+import com.jwhi.som.domains.evt.EvtOffsets
 import com.jwhi.som.domains.evt.EvtPage
+import com.jwhi.som.domains.evt.EvtPageOffsets
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
+import com.jwhi.som.domains.helpers.getByte
 import com.jwhi.som.domains.helpers.getFloat
 import com.jwhi.som.domains.helpers.getShort
 import com.jwhi.som.domains.helpers.getUByte
@@ -31,16 +34,16 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
     }
 
     // EVT Definition
-    // val systemEvent = this.toEvtDefinition(4)
-    // val firstEvent = this.toEvtDefinition(0x9DC)
-    // val manAfterHelpingDwarf = this.toEvtDefinition(0xAD8)
-    // val manBeforeDwarf = this.toEvtDefinition(0xBD4)
-    // val banditEvent = this.toEvtDefinition(0xCD0)
-    // val dwarfTalking = this.toEvtDefinition(0xDCC)
+    val systemEvent = this.toEvtDefinition(0x04)
+    val firstEvent = this.toEvtDefinition(0x9DC)
+    val manAfterHelpingDwarf = this.toEvtDefinition(0xAD8)
+    val manBeforeDwarf = this.toEvtDefinition(0xBD4)
+    val banditEvent = this.toEvtDefinition(0xCD0)
+    val dwarfTalking = this.toEvtDefinition(0xDCC)
     val rectTest1 = this.toEvtDefinition(0xEC8)
     val circEvent1 = this.toEvtDefinition(0xFC4)
-    /*
-    listOf(
+
+    return listOf(
         systemEvent,
         firstEvent,
         manAfterHelpingDwarf,
@@ -50,83 +53,56 @@ fun ByteArray.toMapEvents(): List<EvtDefinition> {
         rectTest1,
         circEvent1,
     )
-     */
-    return listOf(
-        rectTest1,
-        circEvent1
-    )
 }
 
 fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
-    val nameEnd = offset + 30
-    val nameBytes = this.sliceArray(offset..nameEnd)
+    val nameBytes = this.getBytes(offset + EvtOffsets.NAME.intOffset(), 0x1E)
     val nameInput = ByteArrayInputStream(nameBytes)
     val nameWithNullChars = nameInput.bufferedReader().use { it.readText() }
     val name = nameWithNullChars.trim(0x00.toChar())
 
-    val targetTypeByteLocation = nameEnd + 1
-    val targetTypeByte = this.get(targetTypeByteLocation)
+    val targetTypeByte = this[offset + EvtOffsets.TARGET_TYPE.intOffset()]
     val targetType = TargetType.from(targetTypeByte)
 
-    val targetIdLocation = targetTypeByteLocation + 1
-    val targetId = this.getShort(targetIdLocation)
+    val targetId = this.getShort(offset + EvtOffsets.TARGET_ID.intOffset())
 
-    val triggerTypeByteLocation = targetIdLocation + 2
-    val triggerTypeByte = this.getUByte(triggerTypeByteLocation)
+    val triggerTypeByte = this.getUByte(offset + EvtOffsets.TRIGGER_TYPE.intOffset())
     val triggerType = TriggerType.from(triggerTypeByte)
 
-    val triggerItemByteLocation = triggerTypeByteLocation + 1
-    val triggerItem = this.getUByte(triggerItemByteLocation)
+    val triggerItem = this.getUByte(offset + EvtOffsets.TRIGGER_ITEM.intOffset())
 
-    val triggerConeByteLocation = triggerItemByteLocation + 1
-    val triggerCone = this.getUShort(triggerConeByteLocation)
+    val triggerCone = this.getUShort(offset + EvtOffsets.VIEWING_CONE.intOffset())
 
-    // u16 u16x26; Padding ?
-    val paddingLocationStart = triggerConeByteLocation + 1
-    val paddingLocationEnd = paddingLocationStart + 2
-    val padding = this.slice(paddingLocationStart..paddingLocationEnd).map { it.toUByte() }
+    val padding = this.getBytes(offset + EvtOffsets.UNKNOWN.intOffset(), 2)
 
-    // 1045 TOO LARGE
-    // RECT FLOAT: 3821 (EF0) IS ACTUAL
-    val triggerRectWEByteLocation = paddingLocationEnd + 1
-    val triggerRectWEBytes = this.sliceArray(triggerRectWEByteLocation..triggerRectWEByteLocation + 4)
-    println(triggerRectWEBytes.decodeToString())
-    val triggerRectWE = this.getFloat(triggerRectWEByteLocation)
+    val triggerRectWE = this.getFloat(offset + EvtOffsets.TRIGGER_RECTANGLE_WEST_EAST.intOffset())
 
+    val triggerRectNS = this.getFloat(offset + EvtOffsets.TRIGGER_RECTANGLE_NORTH_SOUTH.intOffset())
 
-    val triggerRectNSByteLocation = triggerRectWEByteLocation + 4
-    val triggerRectNSBytes = this.sliceArray(triggerItemByteLocation.. triggerItemByteLocation + 4)
-    println(triggerRectNSBytes.decodeToString())
-    val triggerRectNS = this.getFloat(triggerRectNSByteLocation)
+    val triggerRadius = this.getFloat(offset + EvtOffsets.TRIGGER_CIRCLE_RADIUS.intOffset())
 
-    val triggerRadiusByteLocation = triggerRectNSByteLocation + 4
-    val triggerRadiusBytes = this.sliceArray(triggerRadiusByteLocation..triggerRadiusByteLocation + 4)
-    println(triggerRadiusBytes.decodeToString())
-    val triggerRadius = this.getFloat(triggerRadiusByteLocation)
-
-    val evtConditionStart = triggerRadiusByteLocation + 3
     val condition = EvtCondition(
         compareType = CompareType.from(
-            this.getUShort(evtConditionStart)
+            this.getUShort(offset + EvtOffsets.CHECK_TYPE.intOffset())
         ),
-        compareId = this.getUShort(evtConditionStart + 2),
-        comparedValue = this.getUShort(evtConditionStart + 4),
+        compareId = this.getUShort(offset + EvtOffsets.CHECK_TARGET_ID.intOffset()),
+        comparedValue = this.getUShort(offset + EvtOffsets.COMPARISON_VALUE.intOffset()),
         comparisonType = ComparisonType.from(
-            this.getUShort(evtConditionStart + 6)
+            this.getUShort(offset + EvtOffsets.COMPARISON_TYPE.intOffset())
         )
     )
 
-    val evtPageStart = evtConditionStart + 8
+    val evtPageStart = offset + EvtOffsets.PAGES_START.intOffset()
     val evtPage = EvtPage(
-        payloadOffset = this.getUInt(evtPageStart),
+        payloadOffset = this.getUInt(evtPageStart + EvtPageOffsets.DATA_OFFSET.intOffset()),
         startCondition = EvtCondition(
             compareType = CompareType.from(
-                this.getUShort(evtPageStart + 4)
+                this.getUShort(evtPageStart + EvtPageOffsets.CHECK_TYPE.intOffset())
             ),
-            compareId = this.getUShort(evtPageStart + 6),
-            comparedValue = this.getUShort(evtPageStart + 8),
+            compareId = this.getUShort(evtPageStart + EvtPageOffsets.CHECK_TARGET_ID.intOffset()),
+            comparedValue = this.getUShort(evtPageStart + EvtPageOffsets.COMPARISON_VALUE.intOffset()),
             comparisonType = ComparisonType.from(
-                this.getUShort(evtPageStart + 10)
+                this.getUShort(evtPageStart + EvtPageOffsets.COMPARISON_VALUE.intOffset())
             )
         )
     )
@@ -137,11 +113,15 @@ fun ByteArray.toEvtDefinition(offset: Int): EvtDefinition {
         triggerType = triggerType,
         triggerItem = triggerItem,
         triggerCone = triggerCone,
-        padding = padding,
+        padding = padding.toList(),
         triggerRectWE = triggerRectWE,
         triggerRectNS = triggerRectNS,
         triggerRadius = triggerRadius,
         condition = condition,
         pages = listOf(evtPage)
     )
+}
+
+fun ByteArray.getBytes(offsets: Int, size: Int): ByteArray {
+    return this.sliceArray(offsets..< offsets + size)
 }

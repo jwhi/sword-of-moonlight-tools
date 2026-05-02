@@ -126,7 +126,7 @@ data class EvtDefinition(
     val triggerCone: UShort,
     // Padding?
     // u16 u16x26;
-    val padding: List<UByte>,
+    val padding: List<Byte>,
     // West -> East rectangle Coverage
     val triggerRectWE: Float,
     // North -> South rectangle coverage
