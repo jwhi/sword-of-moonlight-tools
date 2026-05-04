@@ -46,3 +46,7 @@ fun readNullTerminatedStrings(buffer: ByteBuffer, lineCount: Int = 1): List<Stri
     }
     return lines
 }
+
+fun ByteBuffer.getNullTerminatedString() = this.readUntil(byteArrayOf(0x00))
+        .decodeToString()
+        .dropLast(1)

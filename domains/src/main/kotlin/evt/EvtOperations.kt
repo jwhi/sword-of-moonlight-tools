@@ -1,5 +1,6 @@
 package com.jwhi.som.domains.evt
 
+import com.jwhi.som.domains.helpers.getNullTerminatedString
 import com.jwhi.som.domains.helpers.readNullTerminatedStrings
 import java.nio.ByteBuffer
 
@@ -119,30 +120,28 @@ data class EvtOpIfMessage(
     val otherwiseMet: List<EvtOperation> = emptyList(),
     override val bytes: List<Byte> = emptyList()
 ): EvtOperation {
-    constructor(
-        opId: UShort,
-        opSize: UShort,
-        bytes: ByteArray,
-        textLines: List<String>,
-        ): this(
-        opId = opId,
-        opSize = opSize,
-        text = textLines[0],
-        option1 = textLines[1],
-        option2 = textLines[2],
-        bytes = bytes.toList()
-    )
 
-    constructor(
-        opId: UShort,
-        opSize: UShort,
-        bytes: ByteBuffer
-    ): this(
-        opId = opId,
-        opSize = opSize,
-        textLines = readNullTerminatedStrings(bytes, 3),
-        bytes = bytes.array()
-    )
+    companion object {
+        fun fromByteBuffer(
+            opId: UShort,
+            opSize: UShort,
+            buffer: ByteBuffer
+        ): EvtOpIfMessage {
+            val bytes = buffer.array()
+            val message = buffer.getNullTerminatedString()
+            val option1 = buffer.getNullTerminatedString()
+            val option2 = buffer.getNullTerminatedString()
+
+            return EvtOpIfMessage(
+                opId = opId,
+                opSize = opSize,
+                text = message,
+                option1 = option1,
+                option2 = option2,
+                bytes = bytes.toList()
+            )
+        }
+    }
 }
 
 

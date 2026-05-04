@@ -116,10 +116,10 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
                 text = bytes.readString(0x00, opSize.toInt() - 0x04),
                 bytes = bytes.toList()
             )
-            141.toUShort() -> EvtOpIfMessage(
+            141.toUShort() -> EvtOpIfMessage.fromByteBuffer(
                 opId = opId,
                 opSize = opSize,
-                bytes = pageBuffer
+                buffer = pageBuffer
             )
             else -> EvtOpUnimplemented(
                 opId = opId,
