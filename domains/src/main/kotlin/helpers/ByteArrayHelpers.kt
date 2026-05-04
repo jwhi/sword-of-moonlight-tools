@@ -15,7 +15,7 @@ fun ByteArray.readString(offset: Int, size: Int): String {
         .trim(0x00.toChar())
 }
 
-fun readStringScan(buffer: ByteBuffer, lineCount: Int): List<String> {
+fun readNullTerminatedStrings(buffer: ByteBuffer, lineCount: Int = 1): List<String> {
     val reader = ByteArrayInputStream(buffer.array()).buffered(0x01)
     val scanner = Scanner(reader, StandardCharsets.UTF_8)
     scanner.useDelimiter("\u0000")

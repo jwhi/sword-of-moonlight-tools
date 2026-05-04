@@ -1,6 +1,6 @@
 package com.jwhi.som.domains.evt
 
-import com.jwhi.som.domains.helpers.readStringScan
+import com.jwhi.som.domains.helpers.readNullTerminatedStrings
 import java.nio.ByteBuffer
 
 /**
@@ -140,7 +140,7 @@ data class EvtOpIfMessage(
     ): this(
         opId = opId,
         opSize = opSize,
-        textLines = readStringScan(bytes, 3),
+        textLines = readNullTerminatedStrings(bytes, 3),
         bytes = bytes.array()
     )
 }
