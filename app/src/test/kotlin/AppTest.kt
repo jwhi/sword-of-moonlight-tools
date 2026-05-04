@@ -1,4 +1,5 @@
 import com.jwhi.som.domains.evt.CompareType
+import com.jwhi.som.domains.evt.EventIds
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
 import com.jwhi.som.domains.evt.EvtOpIfMessage
 import com.jwhi.som.domains.evt.EvtOpUnimplemented
@@ -142,7 +143,7 @@ class AppTest : FunSpec({
                 assertSoftly(healEvent) {
                     it.definition.name shouldBe "Heal Bump"
                     it.definition.targetType shouldBe TargetType.NPC
-                    it.definition.targetId shouldBe 3
+                    it.definition.targetId shouldBe 3 // Elf (Forest Guardian)
                     it.definition.triggerType shouldBe TriggerType.APPROACH_CIRCLE
                     it.definition.triggerItem shouldBe 0xFF.toUByte()
                     it.definition.triggerCone shouldBe 360u
@@ -162,6 +163,41 @@ class AppTest : FunSpec({
                     val unimplementedMessage = it.pageOperations[pagePayloadOffset] as EvtOpUnimplemented
                     unimplementedMessage.opId shouldBe 84u
                     unimplementedMessage.opSize shouldBe 8u
+                }
+            }
+        }
+
+        test("Event with multiple pages") {
+            val healEvent = evtEvents[10]
+
+            withClue("Event Definition validation") {
+                assertSoftly(healEvent) {
+                    it.definition.name shouldBe "Man Response To Feeding Dwarf"
+                    it.definition.targetType shouldBe TargetType.NPC
+                    it.definition.targetId shouldBe 1 // Man
+                    it.definition.triggerType shouldBe TriggerType.EXAMINE
+                    it.definition.triggerItem shouldBe 0xFF.toUByte()
+                    it.definition.triggerCone shouldBe 360u
+                    it.definition.triggerRadius shouldBe 0.0f
+                    it.definition.condition.compareType shouldBe CompareType.COUNTER
+                    it.definition.condition.compareId shouldBe 876u // Fed Dwarf Counter
+                    it.definition.pages.size shouldBe 1
+                }
+            }
+
+            withClue("PageOperation validation") {
+                assertSoftly(healEvent) {
+                    val pagePayloadOffset = it.definition.pages[0].payloadOffset
+                    pagePayloadOffset shouldBe 258360u
+
+                    it.pageOperations.size shouldBe 1
+                    it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpIfMessage>()
+                    val ifMessage = it.pageOperations[pagePayloadOffset] as EvtOpIfMessage
+                    ifMessage.opId shouldBe EventIds.IF_MESSAGE.value
+                    ifMessage.opSize shouldBe 68u
+                    ifMessage.text shouldBe "Oh you gave some herbs to that \r\ndwarf. May I have one?"
+                    ifMessage.option1 shouldBe "Yes"
+                    ifMessage.option2 shouldBe "No"
                 }
             }
         }
