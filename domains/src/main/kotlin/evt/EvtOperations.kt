@@ -1,7 +1,7 @@
 package com.jwhi.som.domains.evt
 
-import com.jwhi.som.domains.helpers.findTerminator
-import com.jwhi.som.domains.helpers.readStringToTerminator
+import com.jwhi.som.domains.helpers.readStringScan
+import java.nio.ByteBuffer
 
 /**
  * EVT Operations
@@ -70,7 +70,7 @@ data class EvtOpChangeCounter(
     // 0x90 0x00
     override val opId: UShort = 144u,
     override val opSize: UShort = 12u,
-    // A exact value to use
+    // An exact value to use
     val value: UShort,
     // A counter to get the value from
     val targetCounter: UShort,
@@ -122,14 +122,26 @@ data class EvtOpIfMessage(
     constructor(
         opId: UShort,
         opSize: UShort,
-        bytes: ByteArray
+        bytes: ByteArray,
+        textLines: List<String>,
+        ): this(
+        opId = opId,
+        opSize = opSize,
+        text = textLines[0],
+        option1 = textLines[1],
+        option2 = textLines[2],
+        bytes = bytes.toList()
+    )
+
+    constructor(
+        opId: UShort,
+        opSize: UShort,
+        bytes: ByteBuffer
     ): this(
         opId = opId,
         opSize = opSize,
-        text = bytes.readStringToTerminator(0x00, 0x00),
-        option1 = bytes.readStringToTerminator( bytes.findTerminator(0x00, 0x00) + 0x01, 0x00),
-        option2 = bytes.readStringToTerminator(bytes.findTerminator(bytes.findTerminator(0x00, 0x00) + 0x01) + 0x01, 0x00),
-        bytes = bytes.toList()
+        textLines = readStringScan(bytes, 3),
+        bytes = bytes.array()
     )
 }
 

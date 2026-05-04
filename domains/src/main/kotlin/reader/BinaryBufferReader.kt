@@ -107,6 +107,7 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
         val opSize = buffer.getShort().toUShort()
         val bytes = ByteArray(opSize.toInt())
         buffer.get(bytes)
+        val pageBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
         return when(opId) {
             0.toUShort() -> EvtOpDisplayMessage(
                 opId = opId,
@@ -117,7 +118,7 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
             141.toUShort() -> EvtOpIfMessage(
                 opId = opId,
                 opSize = opSize,
-                bytes = bytes
+                bytes = pageBuffer
             )
             else -> EvtOpUnimplemented(
                 opId = opId,
