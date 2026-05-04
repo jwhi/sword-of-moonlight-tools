@@ -1,7 +1,5 @@
 package com.jwhi.som.app
 
-import com.jwhi.som.domains.evt.EvtOpUnimplemented
-import com.jwhi.som.domains.helpers.getUShort
 import com.jwhi.som.domains.reader.ExampleReader
 import com.jwhi.som.domains.reader.toEvtDefinitions
 import com.jwhi.som.domains.reader.toMapEvent

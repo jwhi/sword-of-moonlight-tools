@@ -1,5 +1,8 @@
 package com.jwhi.som.domains.evt
 
+import com.jwhi.som.domains.reader.findTerminator
+import com.jwhi.som.domains.reader.readStringToTerminator
+
 /**
  * EVT Operations
  * EVT operations can either be present in a file or not,
@@ -112,8 +115,23 @@ data class EvtOpIfMessage(
     val text: String,
     val option1: String,
     val option2: String,
+    val conditionMet: List<EvtOperation> = emptyList(),
+    val otherwiseMet: List<EvtOperation> = emptyList(),
     override val bytes: List<Byte> = emptyList()
-): EvtOperation
+): EvtOperation {
+    constructor(
+        opId: UShort,
+        opSize: UShort,
+        bytes: ByteArray
+    ): this(
+        opId = opId,
+        opSize = opSize,
+        text = bytes.readStringToTerminator(0x04, 0x00),
+        option1 = bytes.readStringToTerminator( bytes.findTerminator(0x04, 0x00) + 0x01, 0x00),
+        option2 = bytes.readStringToTerminator(bytes.findTerminator(bytes.findTerminator(0x04, 0x00) + 0x01) + 0x01, 0x00),
+        bytes = bytes.toList()
+    )
+}
 
 
 data class EvtOpEnd(
@@ -122,3 +140,9 @@ data class EvtOpEnd(
     override val opSize: UShort = 4u,
     override val bytes: List<Byte> = emptyList()
 ): EvtOperation
+
+enum class EventIds(val value: UShort) {
+    MESSAGE(0u),
+    IF_MESSAGE(141u),
+    END(255u)
+}

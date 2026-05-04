@@ -3,6 +3,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
+kotest = "6.1.11"
 kotlin = "2.3.20"
 kotlinxDatetime = "0.7.1"
 kotlinxSerialization = "1.11.0"
@@ -14,10 +15,14 @@ kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.r
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 
 # Libraries can be bundled together for easier import
 [bundles]
 kotlinxEcosystem = ["kotlinxDatetime", "kotlinx-serialization-json", "kotlinxCoroutines"]
+kotest = ["kotest-assertions", "kotest-runner"]
 
 [plugins]
 kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotestPlugin = { id = "io.kotest", version.ref = "kotest" }

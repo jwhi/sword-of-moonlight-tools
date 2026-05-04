@@ -131,19 +131,11 @@ fun ByteArray.getEvtOperation(offset: UInt): EvtOperation {
             text = bytes.readString(0x04, opSize.toInt() - 0x04),
             bytes = bytes.toList()
         )
-        141.toUShort() -> {
-            val messageTerminatorLocation = bytes.findTerminator(0x04, 0x00)
-            val option1TerminatorLocation = bytes.findTerminator(messageTerminatorLocation + 0x01, 0x00)
-            val op = EvtOpIfMessage(
-                opId = opId,
-                opSize = opSize,
-                text = bytes.readStringToTerminator(0x04, 0x00),
-                option1 = bytes.readStringToTerminator(messageTerminatorLocation + 0x01, 0x00),
-                option2 = bytes.readStringToTerminator(option1TerminatorLocation + 0x01, 0x00),
-                bytes = bytes.toList()
-            )
-            op
-        }
+        141.toUShort() -> EvtOpIfMessage(
+            opId = opId,
+            opSize = opSize,
+            bytes = bytes
+        )
         else -> EvtOpUnimplemented(
             opId = opId,
             opSize = opSize,
