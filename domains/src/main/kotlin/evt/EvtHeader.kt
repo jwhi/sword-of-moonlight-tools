@@ -76,16 +76,16 @@ data class EvtPage(
 )
 
 // 0 = NPC, 1 = ENEMY, 2 = OBJECT, -2 = SYSTEM, -1 = NONE
-enum class TargetType(val value: Byte) {
-    NPC(0),
-    ENEMY(1),
-    OBJECT(2),
-    SYSTEM(-2),
-    NONE(-1);
+enum class TargetType(val value: UByte) {
+    NPC(0x00u),
+    ENEMY(0x01u),
+    OBJECT(0x02u),
+    SYSTEM(0xFEu),
+    NONE(0xFFu);
 
     companion object {
         private val mapping = TargetType.entries.associateBy(TargetType::value)
-        fun from(value: Byte) = mapping[value]!! // Or default to ?: NONE
+        fun from(value: UByte) = mapping[value]!! // Or default to ?: NONE
     }
 }
 

@@ -7,8 +7,7 @@ import com.jwhi.som.domains.evt.EvtOpIfMessage
 import com.jwhi.som.domains.evt.EvtOpUnimplemented
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
-import com.jwhi.som.domains.reader.ExampleReader
-import com.jwhi.som.domains.reader.toMapEvent
+import com.jwhi.som.domains.reader.BinaryBufferReader
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
@@ -17,9 +16,9 @@ import io.kotest.matchers.types.shouldBeTypeOf
 
 class AppTest : FunSpec({
     context("Read EVT file - 00") {
-        val fileReader = ExampleReader()
-        val evt00Bytes = fileReader.binaryFileReader("/ExampleProject/DATA/MAP/00.evt")
-        val evtEvents = evt00Bytes.toMapEvent()
+        val inputFile = "/ExampleProject/DATA/MAP/00.evt"
+        val bufferReader = BinaryBufferReader(inputFile)
+        val evtEvents = bufferReader.readMapEvent()
 
         test("Event length") {
             evtEvents.size shouldBe 251
@@ -33,6 +32,7 @@ class AppTest : FunSpec({
             }
 
             definedEvents shouldBe listOf(
+                "OPEN MAP",
                 "CLOSE MAP",
                 "PLAYER DEATH",
                 "APPOINT",
@@ -79,7 +79,7 @@ class AppTest : FunSpec({
         }
 
         test("Validate display operation") {
-            val basicIfDisplayMessage = evtEvents[20]
+            val basicIfDisplayMessage = evtEvents[21]
 
             withClue("Event Definition validation") {
                 assertSoftly(basicIfDisplayMessage) {
@@ -115,7 +115,7 @@ class AppTest : FunSpec({
         }
 
         test("Validate if display operation") {
-            val basicIfDisplayMessage = evtEvents[41]
+            val basicIfDisplayMessage = evtEvents[42]
 
             withClue("Event Definition validation") {
                 assertSoftly(basicIfDisplayMessage) {
@@ -153,7 +153,7 @@ class AppTest : FunSpec({
         }
 
         test("Heal player with checking counter") {
-            val healEvent = evtEvents[16]
+            val healEvent = evtEvents[17]
 
             withClue("Event Definition validation") {
                 assertSoftly(healEvent) {
@@ -191,7 +191,7 @@ class AppTest : FunSpec({
         }
 
         test("Event with multiple pages") {
-            val healEvent = evtEvents[10]
+            val healEvent = evtEvents[11]
 
             withClue("Event Definition validation") {
                 assertSoftly(healEvent) {

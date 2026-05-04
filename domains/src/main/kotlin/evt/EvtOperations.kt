@@ -1,7 +1,7 @@
 package com.jwhi.som.domains.evt
 
-import com.jwhi.som.domains.reader.findTerminator
-import com.jwhi.som.domains.reader.readStringToTerminator
+import com.jwhi.som.domains.helpers.findTerminator
+import com.jwhi.som.domains.helpers.readStringToTerminator
 
 /**
  * EVT Operations
@@ -126,9 +126,9 @@ data class EvtOpIfMessage(
     ): this(
         opId = opId,
         opSize = opSize,
-        text = bytes.readStringToTerminator(0x04, 0x00),
-        option1 = bytes.readStringToTerminator( bytes.findTerminator(0x04, 0x00) + 0x01, 0x00),
-        option2 = bytes.readStringToTerminator(bytes.findTerminator(bytes.findTerminator(0x04, 0x00) + 0x01) + 0x01, 0x00),
+        text = bytes.readStringToTerminator(0x00, 0x00),
+        option1 = bytes.readStringToTerminator( bytes.findTerminator(0x00, 0x00) + 0x01, 0x00),
+        option2 = bytes.readStringToTerminator(bytes.findTerminator(bytes.findTerminator(0x00, 0x00) + 0x01) + 0x01, 0x00),
         bytes = bytes.toList()
     )
 }
