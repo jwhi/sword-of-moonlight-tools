@@ -13,6 +13,7 @@ import com.jwhi.som.domains.evt.EvtOperation
 import com.jwhi.som.domains.evt.EvtPage
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
+import com.jwhi.som.domains.helpers.getEvtOperation
 import com.jwhi.som.domains.helpers.readString
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -105,9 +106,9 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
         buffer.position(offset)
         val opId = buffer.getShort().toUShort()
         val opSize = buffer.getShort().toUShort()
-        val bytes = ByteArray(opSize.toInt())
-        buffer.get(bytes)
-        val pageBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
+        val bytes = buffer.getEvtOperation()
+        val pageBuffer = ByteBuffer.wrap(bytes)
+
         return when(opId) {
             0.toUShort() -> EvtOpDisplayMessage(
                 opId = opId,
