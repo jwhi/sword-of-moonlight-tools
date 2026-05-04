@@ -1,5 +1,7 @@
 import com.jwhi.som.domains.evt.CompareType
+import com.jwhi.som.domains.evt.ComparisonType
 import com.jwhi.som.domains.evt.EventIds
+import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
 import com.jwhi.som.domains.evt.EvtOpIfMessage
 import com.jwhi.som.domains.evt.EvtOpUnimplemented
@@ -97,6 +99,13 @@ class AppTest : FunSpec({
                     val pagePayloadOffset = it.definition.pages[0].payloadOffset
                     pagePayloadOffset shouldBe 259280u
 
+                    it.definition.pages[0].startCondition shouldBe EvtCondition(
+                        compareType = CompareType.NONE,
+                        compareId = 0u,
+                        comparisonType = ComparisonType.EQUALS,
+                        comparedValue = 0u
+                    )
+
                     it.pageOperations.size shouldBe 1
                     it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpDisplayMessage>()
                     val ifDisplayMessage = it.pageOperations[pagePayloadOffset] as EvtOpDisplayMessage
@@ -125,6 +134,13 @@ class AppTest : FunSpec({
                 assertSoftly(basicIfDisplayMessage) {
                     val pagePayloadOffset = it.definition.pages[0].payloadOffset
                     pagePayloadOffset shouldBe 259828u
+
+                    it.definition.pages[0].startCondition shouldBe EvtCondition(
+                        compareType = CompareType.NONE,
+                        compareId = 0u,
+                        comparisonType = ComparisonType.EQUALS,
+                        comparedValue = 0u
+                    )
 
                     it.pageOperations.size shouldBe 1
                     it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpIfMessage>()
@@ -158,6 +174,13 @@ class AppTest : FunSpec({
                     val pagePayloadOffset = it.definition.pages[0].payloadOffset
                     pagePayloadOffset shouldBe 258872u
 
+                    it.definition.pages[0].startCondition shouldBe EvtCondition(
+                        compareType = CompareType.NONE,
+                        compareId = 0u,
+                        comparisonType = ComparisonType.EQUALS,
+                        comparedValue = 0u
+                    )
+
                     it.pageOperations.size shouldBe 1
                     it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpUnimplemented>()
                     val unimplementedMessage = it.pageOperations[pagePayloadOffset] as EvtOpUnimplemented
@@ -181,23 +204,47 @@ class AppTest : FunSpec({
                     it.definition.triggerRadius shouldBe 0.0f
                     it.definition.condition.compareType shouldBe CompareType.COUNTER
                     it.definition.condition.compareId shouldBe 876u // Fed Dwarf Counter
-                    it.definition.pages.size shouldBe 1
+                    it.definition.pages.size shouldBe 2
+                }
+                assertSoftly(healEvent.definition.pages) {
+                    it.size shouldBe 2
+                    it[0].startCondition shouldBe EvtCondition(
+                        compareType = CompareType.COUNTER,
+                        compareId = 777u,
+                        comparisonType = ComparisonType.NOT_EQUALS,
+                        comparedValue = 1u
+                    )
+                    it[1].startCondition shouldBe EvtCondition(
+                        compareType = CompareType.COUNTER,
+                        compareId = 777u,
+                        comparisonType = ComparisonType.EQUALS,
+                        comparedValue = 1u
+                    )
                 }
             }
 
             withClue("PageOperation validation") {
                 assertSoftly(healEvent) {
-                    val pagePayloadOffset = it.definition.pages[0].payloadOffset
-                    pagePayloadOffset shouldBe 258360u
+                    val pagePayloadOffset1 = it.definition.pages[0].payloadOffset
+                    pagePayloadOffset1 shouldBe 258360u
 
-                    it.pageOperations.size shouldBe 1
-                    it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpIfMessage>()
-                    val ifMessage = it.pageOperations[pagePayloadOffset] as EvtOpIfMessage
+                    val pagePayloadOffset2 = it.definition.pages[1].payloadOffset
+                    pagePayloadOffset2 shouldBe 258664u
+
+                    it.pageOperations.size shouldBe 2
+                    it.pageOperations[pagePayloadOffset1].shouldBeTypeOf<EvtOpIfMessage>()
+                    val ifMessage = it.pageOperations[pagePayloadOffset1] as EvtOpIfMessage
                     ifMessage.opId shouldBe EventIds.IF_MESSAGE.value
                     ifMessage.opSize shouldBe 68u
                     ifMessage.text shouldBe "Oh you gave some herbs to that \r\ndwarf. May I have one?"
                     ifMessage.option1 shouldBe "Yes"
                     ifMessage.option2 shouldBe "No"
+
+                    it.pageOperations[pagePayloadOffset2].shouldBeTypeOf<EvtOpDisplayMessage>()
+                    val secondOperation = it.pageOperations[pagePayloadOffset2] as EvtOpDisplayMessage
+                    secondOperation.opId shouldBe EventIds.MESSAGE.value
+                    secondOperation.opSize shouldBe 48u
+                    secondOperation.text shouldBe "Let me know if you see anything \r\nyou like."
                 }
             }
         }

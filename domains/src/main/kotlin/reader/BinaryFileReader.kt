@@ -91,19 +91,27 @@ fun ByteArray.toEvtDefinition(offset: Int = 0): EvtDefinition {
     )
 
     val evtPageStart = offset + EvtOffsets.PAGES_START.intOffset()
-    val evtPage = EvtPage(
-        payloadOffset = this.getUInt(evtPageStart + EvtPageOffsets.DATA_OFFSET.intOffset()),
-        startCondition = EvtCondition(
-            compareType = CompareType.from(
-                this.getUShort(evtPageStart + EvtPageOffsets.CHECK_TYPE.intOffset())
-            ),
-            compareId = this.getUShort(evtPageStart + EvtPageOffsets.CHECK_TARGET_ID.intOffset()),
-            comparedValue = this.getUShort(evtPageStart + EvtPageOffsets.COMPARISON_VALUE.intOffset()),
-            comparisonType = ComparisonType.from(
-                this.getUShort(evtPageStart + EvtPageOffsets.COMPARISON_TYPE.intOffset())
+    val evtPagesEnd = offset + 0xFBu.toInt()
+    val pagesBytes = this.slice(evtPageStart..evtPagesEnd)
+    val evtPages = pagesBytes.chunked(12).map {
+        val pageBytes = it.toByteArray()
+        EvtPage(
+            payloadOffset = pageBytes.getUInt(EvtPageOffsets.DATA_OFFSET.intOffset()),
+            startCondition = EvtCondition(
+                compareType = CompareType.from(
+                    pageBytes.getUShort(EvtPageOffsets.CHECK_TYPE.intOffset())
+                ),
+                compareId = pageBytes.getUShort(EvtPageOffsets.CHECK_TARGET_ID.intOffset()),
+                comparedValue = pageBytes.getUShort(EvtPageOffsets.COMPARISON_VALUE.intOffset()),
+                comparisonType = ComparisonType.from(
+                    pageBytes.getUShort(EvtPageOffsets.COMPARISON_TYPE.intOffset())
+                )
             )
         )
-    )
+    }.filter {
+        it.payloadOffset != 0u
+    }
+
     return EvtDefinition(
         name = name,
         targetType = targetType,
@@ -116,7 +124,7 @@ fun ByteArray.toEvtDefinition(offset: Int = 0): EvtDefinition {
         triggerRectNS = triggerRectNS,
         triggerRadius = triggerRadius,
         condition = condition,
-        pages = listOf(evtPage)
+        pages = evtPages
     )
 }
 
