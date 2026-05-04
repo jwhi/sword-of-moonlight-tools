@@ -46,11 +46,12 @@ enum class ComparisonType(val value: UShort) {
     EQUALS(0u),
     NOT_EQUALS(1u),
     GREATER_THAN(2u),
-    LESS_THAN(3u);
+    LESS_THAN(3u),
+    NONE(0xFFu);
 
     companion object {
         private val mapping = ComparisonType.entries.associateBy(ComparisonType::value)
-        fun from(value: UShort) = mapping[value]!! // Or default to something
+        fun from(value: UShort) = mapping[value] ?: NONE // Or default to something
     }
 }
 

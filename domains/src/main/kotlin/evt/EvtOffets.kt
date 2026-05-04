@@ -25,7 +25,7 @@ enum class EvtPageOffsets(val byte: Byte) {
     CHECK_TYPE(0x04),
     CHECK_TARGET_ID(0x06),
     COMPARISON_VALUE(0x08),
-    COMPARISON_TYPE(0x10);
+    COMPARISON_TYPE(0x0A);
 
     fun intOffset() = this.byte.toInt()
 }

@@ -100,7 +100,7 @@ fun ByteArray.toEvtDefinition(offset: Int = 0): EvtDefinition {
             compareId = this.getUShort(evtPageStart + EvtPageOffsets.CHECK_TARGET_ID.intOffset()),
             comparedValue = this.getUShort(evtPageStart + EvtPageOffsets.COMPARISON_VALUE.intOffset()),
             comparisonType = ComparisonType.from(
-                this.getUShort(evtPageStart + EvtPageOffsets.COMPARISON_VALUE.intOffset())
+                this.getUShort(evtPageStart + EvtPageOffsets.COMPARISON_TYPE.intOffset())
             )
         )
     )
