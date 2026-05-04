@@ -9,6 +9,7 @@ import com.jwhi.som.domains.evt.EvtDefinition
 import com.jwhi.som.domains.evt.EvtHeader
 import com.jwhi.som.domains.evt.EvtOffsets
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
+import com.jwhi.som.domains.evt.EvtOpIfMessage
 import com.jwhi.som.domains.evt.EvtOperation
 import com.jwhi.som.domains.evt.EvtOpUnimplemented
 import com.jwhi.som.domains.evt.EvtPage
@@ -127,9 +128,22 @@ fun ByteArray.getEvtOperation(offset: UInt): EvtOperation {
         0.toUShort() -> EvtOpDisplayMessage(
             opId = opId,
             opSize = opSize,
-            text = "Not implemented",
+            text = bytes.readString(0x04, opSize.toInt() - 0x04),
             bytes = bytes.toList()
         )
+        141.toUShort() -> {
+            val messageTerminatorLocation = bytes.findTerminator(0x04, 0x00)
+            val option1TerminatorLocation = bytes.findTerminator(messageTerminatorLocation + 0x01, 0x00)
+            val op = EvtOpIfMessage(
+                opId = opId,
+                opSize = opSize,
+                text = bytes.readStringToTerminator(0x04, 0x00),
+                option1 = bytes.readStringToTerminator(messageTerminatorLocation + 0x01, 0x00),
+                option2 = bytes.readStringToTerminator(option1TerminatorLocation + 0x01, 0x00),
+                bytes = bytes.toList()
+            )
+            op
+        }
         else -> EvtOpUnimplemented(
             opId = opId,
             opSize = opSize,
@@ -146,4 +160,13 @@ fun ByteArray.readString(offset: Int, size: Int): String {
     return ByteArrayInputStream(this.getBytes(offset, size))
         .bufferedReader().use { it.readText() }
         .trim(0x00.toChar())
+}
+
+fun ByteArray.readStringToTerminator(offset: Int, terminator: Byte = 0x00): String {
+    val terminatorLocation = findTerminator(offset, terminator)
+    return this.readString(offset, terminatorLocation - offset)
+}
+
+fun ByteArray.findTerminator(offset: Int, terminator: Byte = 0x00): Int {
+    return this.slice(offset..< this.size).indexOfFirst { it == terminator } + offset
 }

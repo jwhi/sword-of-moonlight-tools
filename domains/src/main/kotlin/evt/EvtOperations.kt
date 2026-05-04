@@ -104,9 +104,21 @@ data class EvtOpUnimplemented(
     override val bytes: List<Byte>
 ): EvtOperation
 
-/*
-data class EvtOpReturn(
-    // opID = -1, opSize = 4
-    val op: EvtOpCode = EvtOpCode(-1, 4u),
+data class EvtOpIfMessage(
+    // opID = 141 (-115 signed short) (0x8D 0x00), opSize = variable
+    override val opId: UShort = 0u,
+    override val opSize: UShort,
+    // Length is not defined but is null terminated
+    val text: String,
+    val option1: String,
+    val option2: String,
+    override val bytes: List<Byte> = emptyList()
 ): EvtOperation
-*/
+
+
+data class EvtOpEnd(
+    // opID = 255 (-1 signed), opSize = 4
+    override val opId: UShort = 0xFFu.toUShort(),
+    override val opSize: UShort = 4u,
+    override val bytes: List<Byte> = emptyList()
+): EvtOperation
