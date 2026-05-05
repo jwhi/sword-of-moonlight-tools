@@ -4,7 +4,11 @@ import com.jwhi.som.domains.evt.EvtOpDisplayMessage
 import com.jwhi.som.domains.evt.EvtOpDisplayMessageFormat
 import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.evt.EvtOpIfMessage
+import com.jwhi.som.domains.evt.EvtOpPlayerParameters
+import com.jwhi.som.domains.evt.EvtOpSetPlayerParameterInCounter
+import io.kotest.core.Tuple4
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -61,6 +65,53 @@ class EvtOperationsTest : FunSpec({
         )
 
         actual shouldBe expected
+    }
+
+    context("Set Player Parameter To Counter from bytes") {
+        withData(
+            nameFn = { it.a },
+            Tuple4(
+                "Store strength stat",
+                listOf(84u, 0u, 8u, 0u, 2u, 0u, 5u, 0u),
+                EvtOpPlayerParameters.STRENGTH_STAT,
+                5u
+            ),
+            Tuple4(
+                "Store magic stat",
+                listOf(84u, 0u, 8u, 0u, 3u, 0u, 7u, 0u),
+                EvtOpPlayerParameters.MAGIC_STAT,
+                7u
+            ),
+            Tuple4(
+                "Store HP",
+                listOf(84u, 0u, 8u, 0u, 0u, 0u, 4u, 0u),
+                EvtOpPlayerParameters.HP,
+                4u
+            )
+        ) { (_, unsignedBytes, stat, targetCounter) ->
+            val bytes = unsignedBytes.map {
+                it.toByte()
+            }.toByteArray()
+            val byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
+            val expected = EvtOpSetPlayerParameterInCounter(
+                opId = EvtOpIds.SET_PLAYER_PARAMETER_TO_COUNTER.value,
+                opSize = 8u,
+                playerParameter = stat,
+                itemId = 0u,
+                targetCounter = targetCounter.toUShort(),
+                bytes.toList()
+            )
+
+            val actualOpId = byteBuffer.getShort().toUShort()
+            val actualOpSize = byteBuffer.getShort().toUShort()
+            val actual = EvtOpSetPlayerParameterInCounter.fromByteBuffer(
+                actualOpId,
+                actualOpSize,
+                byteBuffer
+            )
+
+            actual shouldBe expected
+        }
     }
 
     test("If Message from bytes") {
