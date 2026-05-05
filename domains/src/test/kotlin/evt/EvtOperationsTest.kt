@@ -1,6 +1,7 @@
 package evt
 
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
+import com.jwhi.som.domains.evt.EvtOpDisplayMessageFormat
 import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.evt.EvtOpIfMessage
 import io.kotest.core.spec.style.FunSpec
@@ -24,6 +25,36 @@ class EvtOperationsTest : FunSpec({
         val actualOpId = byteBuffer.getShort().toUShort()
         val actualOpSize = byteBuffer.getShort().toUShort()
         val actual = EvtOpDisplayMessage.fromByteBuffer(
+            actualOpId,
+            actualOpSize,
+            byteBuffer,
+        )
+
+        actual shouldBe expected
+    }
+
+    test("Formatted Message from bytes") {
+        val bytes = listOf(1u, 0u, 44u, 0u, 255u, 0u, 0u, 0u, 43u, 2u, 0u, 0u, 70u, 73u, 78u, 69u, 46u, 32u, 73u, 39u, 76u, 76u, 32u, 66u, 69u, 32u, 70u, 73u, 78u, 69u, 46u, 0u, 77u, 83u, 32u, 71u, 111u, 116u, 104u, 105u, 99u, 0u, 0u, 0u).map {
+            it.toByte()
+        }.toByteArray()
+        val byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
+        val expected = EvtOpDisplayMessageFormat(
+            opId = EvtOpIds.FORMAT_MESSAGE.value,
+            opSize = 44u,
+            textColorRed = 255u,
+            textColorGreen = 0u,
+            textColorBlue = 0u,
+            textColorExtra = 0u,
+            fontWeight = 555u,
+            fontWeightPadding = 0u,
+            text = "FINE. I'LL BE FINE.",
+            fontName = "MS Gothic",
+            bytes = bytes.toList()
+        )
+
+        val actualOpId = byteBuffer.getShort().toUShort()
+        val actualOpSize = byteBuffer.getShort().toUShort()
+        val actual = EvtOpDisplayMessageFormat.fromByteBuffer(
             actualOpId,
             actualOpSize,
             byteBuffer,

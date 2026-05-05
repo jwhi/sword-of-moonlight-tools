@@ -109,10 +109,10 @@ data class EvtOpDisplayMessageFormat(
     override val opId: UShort = 1u,
     override val opSize: UShort,
     // RGBX format (8-bits per component)
-    val textColorRed: Byte,
-    val textColorGreen: Byte,
-    val textColorBlue: Byte,
-    val textColorExtra: Byte,
+    val textColorRed: UByte,
+    val textColorGreen: UByte,
+    val textColorBlue: UByte,
+    val textColorExtra: UByte,
     // GDI font weight (0-550 = Normal, 551-999 Bold)
     val fontWeight: UShort,
     val fontWeightPadding: UShort,
@@ -130,14 +130,15 @@ data class EvtOpDisplayMessageFormat(
             return EvtOpDisplayMessageFormat(
                 opId = opId,
                 opSize = opSize,
-                textColorRed = buffer.get(),
-                textColorGreen = buffer.get(),
-                textColorBlue = buffer.get(),
-                textColorExtra = buffer.get(),
+                textColorRed = buffer.get().toUByte(),
+                textColorGreen = buffer.get().toUByte(),
+                textColorBlue = buffer.get().toUByte(),
+                textColorExtra = buffer.get().toUByte(),
                 fontWeight = buffer.getShort().toUShort(),
                 fontWeightPadding = buffer.getShort().toUShort(),
                 text = buffer.getNullTerminatedString(),
-                fontName = buffer.getNullTerminatedString()
+                fontName = buffer.getNullTerminatedString(),
+                bytes = buffer.array().toList()
             )
         }
     }
