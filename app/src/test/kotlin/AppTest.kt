@@ -76,7 +76,10 @@ class AppTest : FunSpec({
                 "DISPLAY BMP",
                 "IF PlayerHealthCounter > 25",
                 "IF Timer1 > 0 Otherwise",
-                "IF MESSAGE"
+                "IF MESSAGE",
+                "Player Strength + Magic Check",
+                "Page change tests",
+                "Save Point"
             )
         }
 
@@ -147,7 +150,7 @@ class AppTest : FunSpec({
                     it.pageOperations.size shouldBe 1
                     it.pageOperations[pagePayloadOffset]!!.first().shouldBeTypeOf<EvtOpIfMessage>()
                     val ifDisplayMessage = it.pageOperations[pagePayloadOffset]!!.first() as EvtOpIfMessage
-                    ifDisplayMessage.text shouldBe "IF message. First choise is True. \r\nSecond is False."
+                    ifDisplayMessage.text shouldBe "IF message. First choice is True. \r\nSecond is False."
                     ifDisplayMessage.option1 shouldBe "True"
                     ifDisplayMessage.option2 shouldBe "False"
                 }
