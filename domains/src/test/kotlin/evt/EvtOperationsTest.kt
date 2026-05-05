@@ -1,12 +1,15 @@
 package evt
 
+import com.jwhi.som.domains.evt.EvtOpCompareType
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
 import com.jwhi.som.domains.evt.EvtOpDisplayMessageFormat
 import com.jwhi.som.domains.evt.EvtOpIds
+import com.jwhi.som.domains.evt.EvtOpIfCounter
 import com.jwhi.som.domains.evt.EvtOpIfMessage
 import com.jwhi.som.domains.evt.EvtOpPlayerParameters
 import com.jwhi.som.domains.evt.EvtOpSetPlayerParameterInCounter
 import io.kotest.core.Tuple4
+import io.kotest.core.Tuple6
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -105,6 +108,52 @@ class EvtOperationsTest : FunSpec({
             val actualOpId = byteBuffer.getShort().toUShort()
             val actualOpSize = byteBuffer.getShort().toUShort()
             val actual = EvtOpSetPlayerParameterInCounter.fromByteBuffer(
+                actualOpId,
+                actualOpSize,
+                byteBuffer
+            )
+
+            actual shouldBe expected
+        }
+    }
+
+    context("If Counter from bytes") {
+        withData(
+            nameFn = { it.a },
+            Tuple6(
+                "Compare < exact value",
+                listOf(140u, 0u, 12u, 0u, 4u, 0u, 100u, 0u, 0u, 3u, 0u, 0u),
+                4u,
+                100u,
+                false,
+                EvtOpCompareType.LESS_THAN
+            ),
+            Tuple6(
+                "Compare > another counter's value",
+                listOf(140u, 0u, 12u, 0u, 6u, 0u, 7u, 0u, 1u, 2u, 0u, 0u),
+                6u,
+                7u,
+                true,
+                EvtOpCompareType.GREATER_THAN
+            )
+        ) { (_, unsignedBytes, counterId, compareValue, valueIsCounterId, compareType) ->
+            val bytes = unsignedBytes.map {
+                it.toByte()
+            }.toByteArray()
+            val byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
+            val expected = EvtOpIfCounter(
+                opId = EvtOpIds.IF_COUNTER.value,
+                opSize = 12u,
+                counterId = counterId.toUShort(),
+                value = compareValue.toUShort(),
+                valueIsCounterId = valueIsCounterId,
+                compareType = compareType,
+                bytes = bytes.toList()
+            )
+
+            val actualOpId = byteBuffer.getShort().toUShort()
+            val actualOpSize = byteBuffer.getShort().toUShort()
+            val actual = EvtOpIfCounter.fromByteBuffer(
                 actualOpId,
                 actualOpSize,
                 byteBuffer

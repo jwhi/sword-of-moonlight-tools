@@ -293,9 +293,8 @@ data class EvtOpIfCounter(
     override val opSize: UShort,
     val counterId: UShort,
     val value: UShort,
-    val compareToTargetCounter: Boolean,
-    val comparisonType: EvtOpCompareType,
-    val targetCounterId: UShort,
+    val valueIsCounterId: Boolean,
+    val compareType: EvtOpCompareType,
     override val bytes: List<Byte>
 ): EvtOperation {
     companion object {
@@ -307,11 +306,10 @@ data class EvtOpIfCounter(
             return EvtOpIfCounter(
                 opId = opId,
                 opSize = opSize,
-                counterId = buffer.get().toUShort(),
-                value = buffer.get().toUShort(),
-                compareToTargetCounter = buffer.get() == 0x01.toByte(),
-                comparisonType = EvtOpCompareType.from(buffer.get().toUByte()),
-                targetCounterId = buffer.get().toUShort(),
+                counterId = buffer.getShort().toUShort(),
+                value = buffer.getShort().toUShort(),
+                valueIsCounterId = buffer.get() == 0x01.toByte(),
+                compareType = EvtOpCompareType.from(buffer.get().toUByte()),
                 bytes = buffer.array().toList()
             )
         }
