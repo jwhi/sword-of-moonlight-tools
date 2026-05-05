@@ -11,6 +11,7 @@ import com.jwhi.som.domains.reader.BinaryBufferReader
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 
@@ -232,13 +233,24 @@ class AppTest : FunSpec({
                     pagePayloadOffset2 shouldBe 258664u
 
                     it.pageOperations.size shouldBe 2
-                    it.pageOperations[pagePayloadOffset1]!!.first().shouldBeTypeOf<EvtOpIfMessage>()
-                    val ifMessage = it.pageOperations[pagePayloadOffset1]!!.first() as EvtOpIfMessage
+                    val operationList = it.pageOperations[pagePayloadOffset1] ?: emptyList()
+                    operationList shouldHaveSize 10
+                    operationList.first().shouldBeTypeOf<EvtOpIfMessage>()
+                    val ifMessage = operationList.first() as EvtOpIfMessage
                     ifMessage.opId shouldBe EventIds.IF_MESSAGE.value
                     ifMessage.opSize shouldBe 68u
                     ifMessage.text shouldBe "Oh you gave some herbs to that \r\ndwarf. May I have one?"
                     ifMessage.option1 shouldBe "Yes"
                     ifMessage.option2 shouldBe "No"
+
+                    val conditionMetMessage = operationList[1] as EvtOpDisplayMessage
+                    conditionMetMessage.opId shouldBe EventIds.MESSAGE.value
+                    conditionMetMessage.opSize shouldBe 120u
+                    conditionMetMessage.text shouldBe "Thanks! I like selling these. Here \r\n" +
+                        "is some gold. See me again if you \r\n" +
+                        "want to buy some herbs in the \r\n" +
+                        "future."
+
 
                     it.pageOperations[pagePayloadOffset2]!!.first().shouldBeTypeOf<EvtOpDisplayMessage>()
                     val secondOperation = it.pageOperations[pagePayloadOffset2]!!.first() as EvtOpDisplayMessage
