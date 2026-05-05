@@ -10,15 +10,15 @@ import com.jwhi.som.domains.evt.EvtPage
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
 import com.jwhi.som.domains.evt.parseEvtOperation
+import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.getEvtOperationsBuffers
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 class BinaryBufferReader(val buffer: ByteBuffer) {
     constructor(fileName: String) : this(
-        ByteBuffer.wrap(
-            BinaryBufferReader::class.java.getResourceAsStream(fileName).readAllBytes()
-        ).order(ByteOrder.LITTLE_ENDIAN)
+            BinaryBufferReader::class.java.getResourceAsStream(fileName)
+                .readAllBytes()
+                .asBufferLittleEndian()
     )
 
     fun getEvtDefinitions(): List<EvtDefinition> {

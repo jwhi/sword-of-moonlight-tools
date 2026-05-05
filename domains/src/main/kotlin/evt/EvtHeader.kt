@@ -46,12 +46,11 @@ enum class ComparisonType(val value: UShort) {
     EQUALS(0u),
     NOT_EQUALS(1u),
     GREATER_THAN(2u),
-    LESS_THAN(3u),
-    NONE(0xFFu);
+    LESS_THAN(3u);
 
     companion object {
         private val mapping = ComparisonType.entries.associateBy(ComparisonType::value)
-        fun from(value: UShort) = mapping[value] ?: NONE // Or default to something
+        fun from(value: UShort) = mapping[value]!! // Or default to something
     }
 }
 
@@ -114,7 +113,6 @@ enum class TriggerType(val value: UByte) {
 }
 
 data class EvtDefinition(
-    // S-JIS
     // char name[31];
     val name: String,
     val targetType: TargetType,

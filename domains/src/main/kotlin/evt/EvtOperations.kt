@@ -2,7 +2,6 @@ package com.jwhi.som.domains.evt
 
 import com.jwhi.som.domains.helpers.getNullTerminatedString
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 /**
  * EVT Operations
@@ -20,10 +19,6 @@ interface EvtOperation {
     val opSize: UShort
     // Debug to view and validate bytes
     val bytes: List<Byte>
-}
-
-fun ByteArray.parseEvtOperation(): EvtOperation {
-    return ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).parseEvtOperation(0)
 }
 
 fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
@@ -84,7 +79,7 @@ data class EvtOpDisplayMessage(
     // opID = 0, opSize = variable
     override val opId: UShort = 0u,
     override val opSize: UShort,
-    // Length is opSize - 4 bytes
+    // Length is opSize - 4 bytes (id and size bytes are included in op size)
     val text: String,
     override val bytes: List<Byte> = emptyList()
 ): EvtOperation {
@@ -112,10 +107,10 @@ data class EvtOpDisplayMessageFormat(
     val textColorRed: UByte,
     val textColorGreen: UByte,
     val textColorBlue: UByte,
-    val textColorExtra: UByte,
+    val textColorExtraByte: UByte,
     // GDI font weight (0-550 = Normal, 551-999 Bold)
     val fontWeight: UShort,
-    val fontWeightPadding: UShort,
+    val fontWeightExtraBytes: UShort,
     val text: String,
     val fontName: String,
     override val bytes: List<Byte> = emptyList()
@@ -133,9 +128,9 @@ data class EvtOpDisplayMessageFormat(
                 textColorRed = buffer.get().toUByte(),
                 textColorGreen = buffer.get().toUByte(),
                 textColorBlue = buffer.get().toUByte(),
-                textColorExtra = buffer.get().toUByte(),
+                textColorExtraByte = buffer.get().toUByte(),
                 fontWeight = buffer.getShort().toUShort(),
-                fontWeightPadding = buffer.getShort().toUShort(),
+                fontWeightExtraBytes = buffer.getShort().toUShort(),
                 text = buffer.getNullTerminatedString(),
                 fontName = buffer.getNullTerminatedString(),
                 bytes = buffer.array().toList()

@@ -1,11 +1,10 @@
 package com.jwhi.som.domains.helpers
 
-import java.io.ByteArrayInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 fun ByteBuffer.readUntil(terminator: ByteArray): ByteArray {
-    val outputBuffer = ByteBuffer.allocate(this.remaining()).order(ByteOrder.LITTLE_ENDIAN)
+    val outputBuffer = allocateLittleEndianByteBuffer(this.remaining())
     while (this.remaining() > 0) {
         outputBuffer.put(this.get())
         if (outputBuffer.position() >= terminator.size) {
@@ -24,7 +23,7 @@ fun ByteBuffer.readUntil(terminator: ByteArray): ByteArray {
 fun ByteBuffer.getEvtOperationsByteBuffer(): ByteBuffer {
     val opId = this.getShort().toUShort()
     val opSize = this.getShort().toUShort()
-    val outputBuffer = ByteBuffer.allocate(opSize.toInt()).order(ByteOrder.LITTLE_ENDIAN)
+    val outputBuffer = allocateLittleEndianByteBuffer(opSize.toInt())
     outputBuffer.putShort(opId.toShort())
     outputBuffer.putShort(opSize.toShort())
     while (outputBuffer.hasRemaining()) {
@@ -42,7 +41,7 @@ fun ByteBuffer.getEvtOperationsBuffers(): List<ByteBuffer> {
             0x00.toByte()
         )
     )
-    val evtBuffer = ByteBuffer.wrap(evtOperationChunk).order(ByteOrder.LITTLE_ENDIAN)
+    val evtBuffer = evtOperationChunk.asBufferLittleEndian()
     evtBuffer.position(0)
     val output = mutableListOf<ByteBuffer>()
     while (evtBuffer.remaining() > 0) {
@@ -54,3 +53,10 @@ fun ByteBuffer.getEvtOperationsBuffers(): List<ByteBuffer> {
 fun ByteBuffer.getNullTerminatedString() = this.readUntil(byteArrayOf(0x00))
         .decodeToString()
         .dropLast(1)
+
+fun ByteBuffer.getUByte() = this.getShort().toUByte()
+fun ByteBuffer.getUShort() = this.getShort().toUShort()
+
+fun allocateLittleEndianByteBuffer(size: Int): ByteBuffer = ByteBuffer.allocate(size).order(ByteOrder.LITTLE_ENDIAN)
+
+fun ByteArray.asBufferLittleEndian(): ByteBuffer = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN)
