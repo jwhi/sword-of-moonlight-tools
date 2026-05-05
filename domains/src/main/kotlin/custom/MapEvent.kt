@@ -5,5 +5,5 @@ import com.jwhi.som.domains.evt.EvtOperation
 
 data class MapEvent(
     val definition: EvtDefinition,
-    val pageOperations: Map<UInt, EvtOperation>
+    val pageOperations: Map<UInt, List<EvtOperation>>
 )

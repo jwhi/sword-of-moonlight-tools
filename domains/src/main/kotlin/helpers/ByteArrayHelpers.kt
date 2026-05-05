@@ -31,21 +31,36 @@ fun ByteBuffer.readUntil(terminator: ByteArray): ByteArray {
     return outputBuffer.array().slice(0..< outputBuffer.position()).toByteArray()
 }
 
-
-/*
- * Get bytes related to EVT Operations that end in 0xFF 0x04
- */
-fun ByteBuffer.getEvtOperation(): ByteArray {
-    val evtBytes = this.readUntil(byteArrayOf(0xFF.toByte(), 0x04))
-    return evtBytes
-}
-
-fun readNullTerminatedStrings(buffer: ByteBuffer, lineCount: Int = 1): List<String> {
-    val lines = (1..lineCount).map {
-        buffer.readUntil(byteArrayOf(0x00)).decodeToString().dropLast(1)
+fun ByteBuffer.getEvtOperationsByteBuffer(): ByteBuffer {
+    val opId = this.getShort().toUShort()
+    val opSize = this.getShort().toUShort()
+    val outputBuffer = ByteBuffer.allocate(opSize.toInt()).order(ByteOrder.LITTLE_ENDIAN)
+    outputBuffer.putShort(opId.toShort())
+    outputBuffer.putShort(opSize.toShort())
+    while (outputBuffer.hasRemaining()) {
+        outputBuffer.put(this.get())
     }
-    return lines
+    return outputBuffer
 }
+
+fun ByteBuffer.getEvtOperationsBuffers(): List<ByteBuffer> {
+    val evtOperationChunk = readUntil(
+        byteArrayOf(
+            0xFF.toByte(),
+            0xFF.toByte(),
+            0x04.toByte(),
+            0x00.toByte()
+        )
+    )
+    val evtBuffer = ByteBuffer.wrap(evtOperationChunk).order(ByteOrder.LITTLE_ENDIAN)
+    evtBuffer.position(0)
+    val output = mutableListOf<ByteBuffer>()
+    while (evtBuffer.remaining() > 0) {
+        output.add(evtBuffer.getEvtOperationsByteBuffer())
+    }
+    return output
+}
+
 
 fun ByteBuffer.getNullTerminatedString() = this.readUntil(byteArrayOf(0x00))
         .decodeToString()

@@ -4,7 +4,7 @@ import com.jwhi.som.domains.evt.EventIds
 import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
 import com.jwhi.som.domains.evt.EvtOpIfMessage
-import com.jwhi.som.domains.evt.EvtOpUnimplemented
+import com.jwhi.som.domains.evt.EvtOpGeneric
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
 import com.jwhi.som.domains.reader.BinaryBufferReader
@@ -107,8 +107,8 @@ class AppTest : FunSpec({
                     )
 
                     it.pageOperations.size shouldBe 1
-                    it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpDisplayMessage>()
-                    val ifDisplayMessage = it.pageOperations[pagePayloadOffset] as EvtOpDisplayMessage
+                    it.pageOperations[pagePayloadOffset]!!.first().shouldBeTypeOf<EvtOpDisplayMessage>()
+                    val ifDisplayMessage = it.pageOperations[pagePayloadOffset]!!.first() as EvtOpDisplayMessage
                     ifDisplayMessage.text shouldBe "Test message"
                 }
             }
@@ -143,8 +143,8 @@ class AppTest : FunSpec({
                     )
 
                     it.pageOperations.size shouldBe 1
-                    it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpIfMessage>()
-                    val ifDisplayMessage = it.pageOperations[pagePayloadOffset] as EvtOpIfMessage
+                    it.pageOperations[pagePayloadOffset]!!.first().shouldBeTypeOf<EvtOpIfMessage>()
+                    val ifDisplayMessage = it.pageOperations[pagePayloadOffset]!!.first() as EvtOpIfMessage
                     ifDisplayMessage.text shouldBe "IF message. First choise is True. \r\nSecond is False."
                     ifDisplayMessage.option1 shouldBe "True"
                     ifDisplayMessage.option2 shouldBe "False"
@@ -182,8 +182,8 @@ class AppTest : FunSpec({
                     )
 
                     it.pageOperations.size shouldBe 1
-                    it.pageOperations[pagePayloadOffset].shouldBeTypeOf<EvtOpUnimplemented>()
-                    val unimplementedMessage = it.pageOperations[pagePayloadOffset] as EvtOpUnimplemented
+                    it.pageOperations[pagePayloadOffset]!!.first().shouldBeTypeOf<EvtOpGeneric>()
+                    val unimplementedMessage = it.pageOperations[pagePayloadOffset]!!.first() as EvtOpGeneric
                     unimplementedMessage.opId shouldBe 84u
                     unimplementedMessage.opSize shouldBe 8u
                 }
@@ -232,16 +232,16 @@ class AppTest : FunSpec({
                     pagePayloadOffset2 shouldBe 258664u
 
                     it.pageOperations.size shouldBe 2
-                    it.pageOperations[pagePayloadOffset1].shouldBeTypeOf<EvtOpIfMessage>()
-                    val ifMessage = it.pageOperations[pagePayloadOffset1] as EvtOpIfMessage
+                    it.pageOperations[pagePayloadOffset1]!!.first().shouldBeTypeOf<EvtOpIfMessage>()
+                    val ifMessage = it.pageOperations[pagePayloadOffset1]!!.first() as EvtOpIfMessage
                     ifMessage.opId shouldBe EventIds.IF_MESSAGE.value
                     ifMessage.opSize shouldBe 68u
                     ifMessage.text shouldBe "Oh you gave some herbs to that \r\ndwarf. May I have one?"
                     ifMessage.option1 shouldBe "Yes"
                     ifMessage.option2 shouldBe "No"
 
-                    it.pageOperations[pagePayloadOffset2].shouldBeTypeOf<EvtOpDisplayMessage>()
-                    val secondOperation = it.pageOperations[pagePayloadOffset2] as EvtOpDisplayMessage
+                    it.pageOperations[pagePayloadOffset2]!!.first().shouldBeTypeOf<EvtOpDisplayMessage>()
+                    val secondOperation = it.pageOperations[pagePayloadOffset2]!!.first() as EvtOpDisplayMessage
                     secondOperation.opId shouldBe EventIds.MESSAGE.value
                     secondOperation.opSize shouldBe 48u
                     secondOperation.text shouldBe "Let me know if you see anything \r\nyou like."

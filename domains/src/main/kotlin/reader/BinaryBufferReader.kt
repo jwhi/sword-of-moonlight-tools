@@ -6,15 +6,11 @@ import com.jwhi.som.domains.evt.CompareType
 import com.jwhi.som.domains.evt.ComparisonType
 import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtDefinition
-import com.jwhi.som.domains.evt.EvtOpDisplayMessage
-import com.jwhi.som.domains.evt.EvtOpIfMessage
-import com.jwhi.som.domains.evt.EvtOpUnimplemented
-import com.jwhi.som.domains.evt.EvtOperation
 import com.jwhi.som.domains.evt.EvtPage
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
-import com.jwhi.som.domains.helpers.getEvtOperation
-import com.jwhi.som.domains.helpers.readString
+import com.jwhi.som.domains.evt.parseEvtOperation
+import com.jwhi.som.domains.helpers.getEvtOperationsBuffers
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -102,39 +98,18 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
         )
     }
 
-    fun getEvtOperation(offset: Int): EvtOperation {
-        buffer.position(offset)
-        val opId = buffer.getShort().toUShort()
-        val opSize = buffer.getShort().toUShort()
-        val bytes = buffer.getEvtOperation()
-        val pageBuffer = ByteBuffer.wrap(bytes)
-
-        return when(opId) {
-            0.toUShort() -> EvtOpDisplayMessage(
-                opId = opId,
-                opSize = opSize,
-                text = bytes.readString(0x00, opSize.toInt() - 0x04),
-                bytes = bytes.toList()
-            )
-            141.toUShort() -> EvtOpIfMessage.fromByteBuffer(
-                opId = opId,
-                opSize = opSize,
-                buffer = pageBuffer
-            )
-            else -> EvtOpUnimplemented(
-                opId = opId,
-                opSize = opSize,
-                bytes = bytes.toList()
-            )
-        }
-    }
-
     fun readMapEvent(): List<MapEvent> {
         val evtDefinitions = getEvtDefinitions()
         return evtDefinitions.map { definition ->
             MapEvent(
                 definition = definition,
-                pageOperations = definition.pages.associate { it.payloadOffset to this.getEvtOperation(it.payloadOffset.toInt()) }
+                pageOperations = definition.pages.associate { evtPage ->
+                    this.buffer.position(evtPage.payloadOffset.toInt())
+
+                    evtPage.payloadOffset to this.buffer.getEvtOperationsBuffers().map {
+                        it.parseEvtOperation(0)
+                    }
+                }
             )
         }
     }
