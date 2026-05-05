@@ -34,11 +34,10 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
     val pageBuffer = this
 
     return when(opId) {
-        EvtOpIds.MESSAGE.value -> EvtOpDisplayMessage(
+        EvtOpIds.MESSAGE.value -> EvtOpDisplayMessage.fromByteBuffer(
             opId = opId,
             opSize = opSize,
-            text = this.getNullTerminatedString(),
-            bytes = bytes.toList()
+            buffer = pageBuffer
         )
         EvtOpIds.FORMAT_MESSAGE.value -> EvtOpDisplayMessageFormat.fromByteBuffer(
             opId = opId,
@@ -88,7 +87,22 @@ data class EvtOpDisplayMessage(
     // Length is opSize - 4 bytes
     val text: String,
     override val bytes: List<Byte> = emptyList()
-): EvtOperation
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(
+        opId: UShort,
+        opSize: UShort,
+        buffer: ByteBuffer
+    ): EvtOpDisplayMessage {
+            return EvtOpDisplayMessage(
+                opId = opId,
+                opSize = opSize,
+                text = buffer.getNullTerminatedString(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
 
 data class EvtOpDisplayMessageFormat(
     // opID = 1, opSize = variable
