@@ -4,16 +4,6 @@ import java.io.ByteArrayInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-fun ByteArray.getBytes(offset: Int, size: Int): ByteArray {
-    return this.sliceArray(offset..< offset + size)
-}
-
-fun ByteArray.readString(offset: Int, size: Int): String {
-    return ByteArrayInputStream(this.getBytes(offset, size))
-        .bufferedReader().use { it.readText() }
-        .trim(0x00.toChar())
-}
-
 fun ByteBuffer.readUntil(terminator: ByteArray): ByteArray {
     val outputBuffer = ByteBuffer.allocate(this.remaining()).order(ByteOrder.LITTLE_ENDIAN)
     while (this.remaining() > 0) {
@@ -60,7 +50,6 @@ fun ByteBuffer.getEvtOperationsBuffers(): List<ByteBuffer> {
     }
     return output
 }
-
 
 fun ByteBuffer.getNullTerminatedString() = this.readUntil(byteArrayOf(0x00))
         .decodeToString()

@@ -1,8 +1,6 @@
 package com.jwhi.som.domains.evt
 
 import com.jwhi.som.domains.helpers.getNullTerminatedString
-import com.jwhi.som.domains.helpers.readString
-import com.jwhi.som.domains.helpers.readUntil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -36,22 +34,45 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
     val pageBuffer = this
 
     return when(opId) {
-        0.toUShort() -> EvtOpDisplayMessage(
+        EvtOpIds.MESSAGE.value -> EvtOpDisplayMessage(
             opId = opId,
             opSize = opSize,
             text = this.getNullTerminatedString(),
             bytes = bytes.toList()
         )
-        1.toUShort() -> EvtOpDisplayMessageFormat.fromByteBuffer(
+        EvtOpIds.FORMAT_MESSAGE.value -> EvtOpDisplayMessageFormat.fromByteBuffer(
             opId = opId,
             opSize = opSize,
             buffer = pageBuffer
         )
-        141.toUShort() -> EvtOpIfMessage.fromByteBuffer(
+        EvtOpIds.SET_PLAYER_PARAMETER_TO_COUNTER.value -> EvtOpSetPlayerParameterInCounter.fromByteBuffer(
             opId = opId,
             opSize = opSize,
             buffer = pageBuffer
         )
+        EvtOpIds.IF_COUNTER.value -> EvtOpIfCounter.fromByteBuffer(
+            opId = opId,
+            opSize = opSize,
+            buffer = pageBuffer
+        )
+        EvtOpIds.IF_MESSAGE.value -> EvtOpIfMessage.fromByteBuffer(
+            opId = opId,
+            opSize = opSize,
+            buffer = pageBuffer
+        )
+        EvtOpIds.OTHERWISE.value -> EvtOpOtherwise()
+        EvtOpIds.END_IF.value -> EvtOpEndIf()
+        EvtOpIds.CHANGE_COUNTER.value -> EvtOpChangeCounter.fromByteBuffer(
+            opId = opId,
+            opSize = opSize,
+            buffer = pageBuffer
+        )
+        EvtOpIds.CHANGE_PAGE.value -> EvtOpChangePage.fromByteBuffer(
+            opId = opId,
+            opSize = opSize,
+            buffer = pageBuffer
+        )
+        EvtOpIds.RETURN.value -> EvtOpReturn()
         else -> EvtOpGeneric(
             opId = opId,
             opSize = opSize,
@@ -108,46 +129,62 @@ data class EvtOpDisplayMessageFormat(
     }
 }
 
-// 0 = Set To, 1 = Increment By, 2 = Decrement By
 enum class EvtOpCounterMode(val value: UByte) {
     SET_TO(0u),
     INCREMENT_BY(1u),
-    DECREMENT_BY(2u)
+    DECREMENT_BY(2u),
+    COUNTER(3u);
+
+    companion object {
+        private val mapping = EvtOpCounterMode.entries.associateBy(EvtOpCounterMode::value)
+        fun from(byte: UByte): EvtOpCounterMode = mapping[byte]!!
+    }
 }
 
-/*
-90 - Change Counter's Value
-    | event structure |
-    00 # buffer
-    0C 00 # number of bytes for this event block (starting from EventType)
-    46 00 # Counter
-    64 00 #Value
-    01 # bool 00 - 01 Value / Counter's Value
-    02 # Conditional 00 - 03 (SetTo, Raise, Lower)
-    00 00 # buffer
-*/
 data class EvtOpChangeCounter(
-    // opID = 144, opSize = 12
+    // opID = 144,
     // 0x90 0x00
     override val opId: UShort = 144u,
     override val opSize: UShort = 12u,
-    // An exact value to use
-    val value: UShort,
-    // A counter to get the value from
-    val targetCounter: UShort,
+    val counterId: UShort,
+    val exactValue: UShort,
     // When 0 = use exact value,
-    // when 1 = use value from targetCounter
+    // when 1 = use value from sourceCounter
     val useTarget: Boolean,
     val mode: EvtOpCounterMode,
-    val padding: UShort,
+    val sourceCounter: UShort,
     override val bytes: List<Byte> = emptyList()
-): EvtOperation
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(
+            opId: UShort,
+            opSize: UShort,
+            buffer: ByteBuffer
+        ): EvtOpChangeCounter {
+            return EvtOpChangeCounter(
+                opId = opId,
+                opSize = opSize,
+                counterId = buffer.getShort().toUShort(),
+                exactValue = buffer.getShort().toUShort(),
+                useTarget = buffer.get() == 0x01.toByte(),
+                mode = EvtOpCounterMode.from(buffer.get().toUByte()),
+                sourceCounter = buffer.getShort().toUShort(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
 
 // 0 = Forward, 1 = Back, 2 = Specific
 enum class EvtOpChangePageType(val value: UByte) {
     FORWARD(0u),
     BACK(1u),
-    SPECIFIC(2u)
+    SPECIFIC(2u);
+
+    companion object {
+        private val mapping = entries.associateBy(EvtOpChangePageType::value)
+        fun from(byte: UByte): EvtOpChangePageType = mapping[byte]!!
+    }
 }
 data class EvtOpChangePage(
     // opID = 145, opSize = variable
@@ -155,12 +192,27 @@ data class EvtOpChangePage(
     override val opSize: UShort,
     // 0x000 -> 0x3FF = other,
     // 0xFFFF = self
-    val target: Short,
+    val target: UShort,
     val changeType: EvtOpChangePageType,
     // ID to use when changeType == 2 (0 - 15)
     val changeSpecificId: UByte,
     override val bytes: List<Byte> = emptyList()
-): EvtOperation
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(
+            opId: UShort,
+            opSize: UShort,
+            buffer: ByteBuffer
+        ) = EvtOpChangePage(
+            opId = opId,
+            opSize = opSize,
+            target = buffer.getShort().toUShort(),
+            changeType = EvtOpChangePageType.from(buffer.get().toUByte()),
+            changeSpecificId = buffer.get().toUByte(),
+            bytes = buffer.array().toList()
+        )
+    }
+}
 
 data class EvtOpGeneric(
     override val opId: UShort,
@@ -168,14 +220,92 @@ data class EvtOpGeneric(
     override val bytes: List<Byte>
 ): EvtOperation
 
-data class EvtIfBlock(
-    val ifBlock: List<EvtOperation>,
-    val otherwiseBlock: List<EvtOperation>
-)
+enum class EvtOpPlayerParameters(val value: UByte) {
+    HP(0x00u),
+    MP(0x01u),
+    STRENGTH_STAT(0x02u),
+    MAGIC_STAT(0x03u),
+    ITEM_QUANTITY(0x04u),
+    GOLD_AMOUNT(0x05u),
+    LEVEL(0x06u);
+
+    companion object {
+        private val mappings = entries.associateBy(EvtOpPlayerParameters::value)
+        fun from(byte: UByte): EvtOpPlayerParameters = mappings[byte]!!
+    }
+}
+
+enum class EvtOpCompareType(val value: UByte) {
+    EQUALS(0u),
+    NOT_EQUALS(1u),
+    GREATER_THAN(2u),
+    LESS_THAN(3u),
+    NONE(0xFFu);
+
+    companion object {
+        private val mapping = entries.associateBy(EvtOpCompareType::value)
+        fun from(value: UByte) = mapping[value] ?: NONE // Or default to something
+    }
+}
+data class EvtOpSetPlayerParameterInCounter(
+    override val opId: UShort = 84u,
+    override val opSize: UShort,
+    val playerParameter: EvtOpPlayerParameters,
+    val itemId: UByte,
+    val targetCounter: UShort,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(
+            opId: UShort,
+            opSize: UShort,
+            buffer: ByteBuffer
+        ): EvtOpSetPlayerParameterInCounter {
+            return EvtOpSetPlayerParameterInCounter(
+                opId = opId,
+                opSize = opSize,
+                playerParameter = EvtOpPlayerParameters.from(buffer.get().toUByte()),
+                itemId = buffer.get().toUByte(),
+                targetCounter = buffer.get().toUShort(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
+
+data class EvtOpIfCounter(
+    override val opId: UShort = 140u,
+    override val opSize: UShort,
+    val counterId: UShort,
+    val value: UShort,
+    val compareToTargetCounter: Boolean,
+    val comparisonType: EvtOpCompareType,
+    val targetCounterId: UShort,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(
+            opId: UShort,
+            opSize: UShort,
+            buffer: ByteBuffer
+        ): EvtOpIfCounter {
+            return EvtOpIfCounter(
+                opId = opId,
+                opSize = opSize,
+                counterId = buffer.get().toUShort(),
+                value = buffer.get().toUShort(),
+                compareToTargetCounter = buffer.get() == 0x01.toByte(),
+                comparisonType = EvtOpCompareType.from(buffer.get().toUByte()),
+                targetCounterId = buffer.get().toUShort(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
 
 data class EvtOpIfMessage(
     // opID = 141 (-115 signed short) (0x8D 0x00), opSize = variable
-    override val opId: UShort = 0u,
+    override val opId: UShort,
     override val opSize: UShort,
     // Length is not defined but is null terminated
     val text: String,
@@ -194,20 +324,6 @@ data class EvtOpIfMessage(
             val message = buffer.getNullTerminatedString()
             val option1 = buffer.getNullTerminatedString()
             val option2 = buffer.getNullTerminatedString()
-            /*
-            val ifBlockBytes = buffer.readUntil(
-                byteArrayOf(
-                    0x8E.toByte(),
-                    0x00,
-                    0x04,
-                    0x00
-                )
-            )
-
-             */
-            // val ifBlock = ifBlockBytes.parseEvtOperation()
-            // val otherwiseBlockBytes = buffer.readUntil(byteArrayOf(0xFF.toByte()))
-            // val otherwiseBlock = otherwiseBlockBytes.parseEvtOperation()
             return EvtOpIfMessage(
                 opId = opId,
                 opSize = opSize,
@@ -220,16 +336,23 @@ data class EvtOpIfMessage(
     }
 }
 
-
-data class EvtOpEnd(
-    // opID = 255 (-1 signed), opSize = 4
-    override val opId: UShort = 0xFFu.toUShort(),
-    override val opSize: UShort = 4u,
+data class EvtOpOtherwise(
+    override val opId: UShort = 142u,
+    override val opSize: UShort = 0x04u,
     override val bytes: List<Byte> = emptyList()
 ): EvtOperation
 
-enum class EventIds(val value: UShort) {
-    MESSAGE(0u),
-    IF_MESSAGE(141u),
-    END(255u)
-}
+data class EvtOpEndIf(
+    override val opId: UShort = 143u,
+    override val opSize: UShort = 0x04u,
+    override val bytes: List<Byte> = emptyList()
+): EvtOperation
+
+
+
+data class EvtOpReturn(
+    // opID = 255 (-1 signed), opSize = 4
+    override val opId: UShort = UShort.MAX_VALUE,
+    override val opSize: UShort = 4u,
+    override val bytes: List<Byte> = emptyList()
+): EvtOperation

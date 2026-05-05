@@ -1,10 +1,12 @@
 import com.jwhi.som.domains.evt.CompareType
 import com.jwhi.som.domains.evt.ComparisonType
-import com.jwhi.som.domains.evt.EventIds
 import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
 import com.jwhi.som.domains.evt.EvtOpIfMessage
 import com.jwhi.som.domains.evt.EvtOpGeneric
+import com.jwhi.som.domains.evt.EvtOpIds
+import com.jwhi.som.domains.evt.EvtOpPlayerParameters
+import com.jwhi.som.domains.evt.EvtOpSetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
 import com.jwhi.som.domains.reader.BinaryBufferReader
@@ -183,10 +185,13 @@ class AppTest : FunSpec({
                     )
 
                     it.pageOperations.size shouldBe 1
-                    it.pageOperations[pagePayloadOffset]!!.first().shouldBeTypeOf<EvtOpGeneric>()
-                    val unimplementedMessage = it.pageOperations[pagePayloadOffset]!!.first() as EvtOpGeneric
-                    unimplementedMessage.opId shouldBe 84u
-                    unimplementedMessage.opSize shouldBe 8u
+                    it.pageOperations[pagePayloadOffset]!!.first().shouldBeTypeOf<EvtOpSetPlayerParameterInCounter>()
+                    val setPlayerParameterInCounter = it.pageOperations[pagePayloadOffset]!!.first() as EvtOpSetPlayerParameterInCounter
+                    setPlayerParameterInCounter.opId shouldBe 84u
+                    setPlayerParameterInCounter.opSize shouldBe 8u
+                    setPlayerParameterInCounter.playerParameter shouldBe EvtOpPlayerParameters.HP
+                    setPlayerParameterInCounter.targetCounter shouldBe 4u
+
                 }
             }
         }
@@ -237,14 +242,14 @@ class AppTest : FunSpec({
                     operationList shouldHaveSize 10
                     operationList.first().shouldBeTypeOf<EvtOpIfMessage>()
                     val ifMessage = operationList.first() as EvtOpIfMessage
-                    ifMessage.opId shouldBe EventIds.IF_MESSAGE.value
+                    ifMessage.opId shouldBe EvtOpIds.IF_MESSAGE.value
                     ifMessage.opSize shouldBe 68u
                     ifMessage.text shouldBe "Oh you gave some herbs to that \r\ndwarf. May I have one?"
                     ifMessage.option1 shouldBe "Yes"
                     ifMessage.option2 shouldBe "No"
 
                     val conditionMetMessage = operationList[1] as EvtOpDisplayMessage
-                    conditionMetMessage.opId shouldBe EventIds.MESSAGE.value
+                    conditionMetMessage.opId shouldBe EvtOpIds.MESSAGE.value
                     conditionMetMessage.opSize shouldBe 120u
                     conditionMetMessage.text shouldBe "Thanks! I like selling these. Here \r\n" +
                         "is some gold. See me again if you \r\n" +
@@ -254,7 +259,7 @@ class AppTest : FunSpec({
 
                     it.pageOperations[pagePayloadOffset2]!!.first().shouldBeTypeOf<EvtOpDisplayMessage>()
                     val secondOperation = it.pageOperations[pagePayloadOffset2]!!.first() as EvtOpDisplayMessage
-                    secondOperation.opId shouldBe EventIds.MESSAGE.value
+                    secondOperation.opId shouldBe EvtOpIds.MESSAGE.value
                     secondOperation.opSize shouldBe 48u
                     secondOperation.text shouldBe "Let me know if you see anything \r\nyou like."
                 }
