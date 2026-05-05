@@ -1,6 +1,8 @@
 package com.jwhi.som.domains.evt
 
 import com.jwhi.som.domains.helpers.getNullTerminatedString
+import com.jwhi.som.domains.helpers.getUByte
+import com.jwhi.som.domains.helpers.getUShort
 import java.nio.ByteBuffer
 
 /**
@@ -23,8 +25,8 @@ interface EvtOperation {
 
 fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
     this.position(offset)
-    val opId = this.getShort().toUShort()
-    val opSize = this.getShort().toUShort()
+    val opId = this.getUShort()
+    val opSize = this.getUShort()
     val bytes = this.array()
     val pageBuffer = this
 
@@ -125,12 +127,12 @@ data class EvtOpDisplayMessageFormat(
             return EvtOpDisplayMessageFormat(
                 opId = opId,
                 opSize = opSize,
-                textColorRed = buffer.get().toUByte(),
-                textColorGreen = buffer.get().toUByte(),
-                textColorBlue = buffer.get().toUByte(),
-                textColorExtraByte = buffer.get().toUByte(),
-                fontWeight = buffer.getShort().toUShort(),
-                fontWeightExtraBytes = buffer.getShort().toUShort(),
+                textColorRed = buffer.getUByte(),
+                textColorGreen = buffer.getUByte(),
+                textColorBlue = buffer.getUByte(),
+                textColorExtraByte = buffer.getUByte(),
+                fontWeight = buffer.getUShort(),
+                fontWeightExtraBytes = buffer.getUShort(),
                 text = buffer.getNullTerminatedString(),
                 fontName = buffer.getNullTerminatedString(),
                 bytes = buffer.array().toList()
@@ -174,11 +176,11 @@ data class EvtOpChangeCounter(
             return EvtOpChangeCounter(
                 opId = opId,
                 opSize = opSize,
-                counterId = buffer.getShort().toUShort(),
-                exactValue = buffer.getShort().toUShort(),
+                counterId = buffer.getUShort(),
+                exactValue = buffer.getUShort(),
                 useTarget = buffer.get() == 0x01.toByte(),
-                mode = EvtOpCounterMode.from(buffer.get().toUByte()),
-                sourceCounter = buffer.getShort().toUShort(),
+                mode = EvtOpCounterMode.from(buffer.getUByte()),
+                sourceCounter = buffer.getUShort(),
                 bytes = buffer.array().toList()
             )
         }
@@ -216,9 +218,9 @@ data class EvtOpChangePage(
         ) = EvtOpChangePage(
             opId = opId,
             opSize = opSize,
-            target = buffer.getShort().toUShort(),
-            changeType = EvtOpChangePageType.from(buffer.get().toUByte()),
-            changeSpecificId = buffer.get().toUByte(),
+            target = buffer.getUShort(),
+            changeType = EvtOpChangePageType.from(buffer.getUByte()),
+            changeSpecificId = buffer.getUByte(),
             bytes = buffer.array().toList()
         )
     }
@@ -274,8 +276,8 @@ data class EvtOpSetPlayerParameterInCounter(
             return EvtOpSetPlayerParameterInCounter(
                 opId = opId,
                 opSize = opSize,
-                playerParameter = EvtOpPlayerParameters.from(buffer.get().toUByte()),
-                itemId = buffer.get().toUByte(),
+                playerParameter = EvtOpPlayerParameters.from(buffer.getUByte()),
+                itemId = buffer.getUByte(),
                 targetCounter = buffer.get().toUShort(),
                 bytes = buffer.array().toList()
             )
@@ -301,10 +303,10 @@ data class EvtOpIfCounter(
             return EvtOpIfCounter(
                 opId = opId,
                 opSize = opSize,
-                counterId = buffer.getShort().toUShort(),
-                value = buffer.getShort().toUShort(),
+                counterId = buffer.getUShort(),
+                value = buffer.getUShort(),
                 valueIsCounterId = buffer.get() == 0x01.toByte(),
-                compareType = EvtOpCompareType.from(buffer.get().toUByte()),
+                compareType = EvtOpCompareType.from(buffer.getUByte()),
                 bytes = buffer.array().toList()
             )
         }

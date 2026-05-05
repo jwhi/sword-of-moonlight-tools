@@ -90,7 +90,7 @@ class AppTest : FunSpec({
                 assertSoftly(basicIfDisplayMessage) {
                     it.definition.name shouldBe "Display Message"
                     it.definition.targetType shouldBe TargetType.OBJECT
-                    it.definition.targetId shouldBe 3
+                    it.definition.targetId shouldBe 3u
                     it.definition.triggerType shouldBe TriggerType.EXAMINE
                     it.definition.triggerItem shouldBe 0xFF.toUByte()
                     it.definition.triggerCone shouldBe 360u
@@ -126,7 +126,7 @@ class AppTest : FunSpec({
                 assertSoftly(basicIfDisplayMessage) {
                     it.definition.name shouldBe "IF MESSAGE"
                     it.definition.targetType shouldBe TargetType.OBJECT
-                    it.definition.targetId shouldBe 17
+                    it.definition.targetId shouldBe 17u
                     it.definition.triggerType shouldBe TriggerType.EXAMINE
                     it.definition.triggerItem shouldBe 0xFF.toUByte()
                     it.definition.triggerCone shouldBe 360u
@@ -164,7 +164,7 @@ class AppTest : FunSpec({
                 assertSoftly(healEvent) {
                     it.definition.name shouldBe "Heal Bump"
                     it.definition.targetType shouldBe TargetType.NPC
-                    it.definition.targetId shouldBe 3 // Elf (Forest Guardian)
+                    it.definition.targetId shouldBe 3u // Elf (Forest Guardian)
                     it.definition.triggerType shouldBe TriggerType.APPROACH_CIRCLE
                     it.definition.triggerItem shouldBe 0xFF.toUByte()
                     it.definition.triggerCone shouldBe 360u
@@ -205,7 +205,7 @@ class AppTest : FunSpec({
                 assertSoftly(healEvent) {
                     it.definition.name shouldBe "Man Response To Feeding Dwarf"
                     it.definition.targetType shouldBe TargetType.NPC
-                    it.definition.targetId shouldBe 1 // Man
+                    it.definition.targetId shouldBe 1u // Man
                     it.definition.triggerType shouldBe TriggerType.EXAMINE
                     it.definition.triggerItem shouldBe 0xFF.toUByte()
                     it.definition.triggerCone shouldBe 360u

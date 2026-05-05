@@ -9,6 +9,7 @@ import com.jwhi.som.domains.evt.EvtOpIfMessage
 import com.jwhi.som.domains.evt.EvtOpPlayerParameters
 import com.jwhi.som.domains.evt.EvtOpSetPlayerParameterInCounter
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
+import com.jwhi.som.domains.helpers.getUShort
 import io.kotest.core.Tuple4
 import io.kotest.core.Tuple6
 import io.kotest.core.spec.style.FunSpec
@@ -28,8 +29,8 @@ class EvtOperationsTest : FunSpec({
             bytes = bytes.toList()
         )
 
-        val actualOpId = byteBuffer.getShort().toUShort()
-        val actualOpSize = byteBuffer.getShort().toUShort()
+        val actualOpId = byteBuffer.getUShort()
+        val actualOpSize = byteBuffer.getUShort()
         val actual = EvtOpDisplayMessage.fromByteBuffer(
             actualOpId,
             actualOpSize,
@@ -58,8 +59,8 @@ class EvtOperationsTest : FunSpec({
             bytes = bytes.toList()
         )
 
-        val actualOpId = byteBuffer.getShort().toUShort()
-        val actualOpSize = byteBuffer.getShort().toUShort()
+        val actualOpId = byteBuffer.getUShort()
+        val actualOpSize = byteBuffer.getUShort()
         val actual = EvtOpDisplayMessageFormat.fromByteBuffer(
             actualOpId,
             actualOpSize,
@@ -104,8 +105,8 @@ class EvtOperationsTest : FunSpec({
                 bytes.toList()
             )
 
-            val actualOpId = byteBuffer.getShort().toUShort()
-            val actualOpSize = byteBuffer.getShort().toUShort()
+            val actualOpId = byteBuffer.getUShort()
+            val actualOpSize = byteBuffer.getUShort()
             val actual = EvtOpSetPlayerParameterInCounter.fromByteBuffer(
                 actualOpId,
                 actualOpSize,
@@ -150,8 +151,8 @@ class EvtOperationsTest : FunSpec({
                 bytes = bytes.toList()
             )
 
-            val actualOpId = byteBuffer.getShort().toUShort()
-            val actualOpSize = byteBuffer.getShort().toUShort()
+            val actualOpId = byteBuffer.getUShort()
+            val actualOpSize = byteBuffer.getUShort()
             val actual = EvtOpIfCounter.fromByteBuffer(
                 actualOpId,
                 actualOpSize,
@@ -177,8 +178,8 @@ class EvtOperationsTest : FunSpec({
             bytes = bytes.toList()
         )
 
-        val actualOpId = byteBuffer.getShort().toUShort()
-        val actualOpSize = byteBuffer.getShort().toUShort()
+        val actualOpId = byteBuffer.getUShort()
+        val actualOpSize = byteBuffer.getUShort()
         val actual = EvtOpIfMessage.fromByteBuffer(
             actualOpId,
             actualOpSize,

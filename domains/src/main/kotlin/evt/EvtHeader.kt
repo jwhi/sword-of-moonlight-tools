@@ -117,15 +117,14 @@ data class EvtDefinition(
     val name: String,
     val targetType: TargetType,
     // Map ID of npc/enemy/object
-    val targetId: Short,
+    val targetId: UShort,
     val triggerType: TriggerType,
     // 0x00->0xF9 = Item ID, 0xFF = None
     val triggerItem: UByte,
     // View activation cone (degrees)
     val triggerCone: UShort,
-    // Padding?
-    // u16 u16x26;
-    val padding: List<Byte>,
+    // Padding? - Not implemented?
+    val padding: UShort,
     // West -> East rectangle Coverage
     val triggerRectWE: Float,
     // North -> South rectangle coverage

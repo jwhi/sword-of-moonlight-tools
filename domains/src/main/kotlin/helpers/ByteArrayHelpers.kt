@@ -21,8 +21,8 @@ fun ByteBuffer.readUntil(terminator: ByteArray): ByteArray {
 }
 
 fun ByteBuffer.getEvtOperationsByteBuffer(): ByteBuffer {
-    val opId = this.getShort().toUShort()
-    val opSize = this.getShort().toUShort()
+    val opId = this.getUShort()
+    val opSize = this.getUShort()
     val outputBuffer = allocateLittleEndianByteBuffer(opSize.toInt())
     outputBuffer.putShort(opId.toShort())
     outputBuffer.putShort(opSize.toShort())
@@ -54,8 +54,9 @@ fun ByteBuffer.getNullTerminatedString() = this.readUntil(byteArrayOf(0x00))
         .decodeToString()
         .dropLast(1)
 
-fun ByteBuffer.getUByte() = this.getShort().toUByte()
+fun ByteBuffer.getUByte() = this.get().toUByte()
 fun ByteBuffer.getUShort() = this.getShort().toUShort()
+fun ByteBuffer.getUInt() = this.getInt().toUInt()
 
 fun allocateLittleEndianByteBuffer(size: Int): ByteBuffer = ByteBuffer.allocate(size).order(ByteOrder.LITTLE_ENDIAN)
 

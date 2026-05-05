@@ -12,6 +12,9 @@ import com.jwhi.som.domains.evt.TriggerType
 import com.jwhi.som.domains.evt.parseEvtOperation
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.getEvtOperationsBuffers
+import com.jwhi.som.domains.helpers.getUByte
+import com.jwhi.som.domains.helpers.getUInt
+import com.jwhi.som.domains.helpers.getUShort
 import java.nio.ByteBuffer
 
 class BinaryBufferReader(val buffer: ByteBuffer) {
@@ -22,7 +25,7 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
     )
 
     fun getEvtDefinitions(): List<EvtDefinition> {
-        val magicHeader = buffer.getInt().toUInt()
+        val magicHeader = buffer.getUInt()
         if (magicHeader != 1024u) {
             throw InvalidEvtException("Invalid header. Expected 1024 but was $magicHeader")
         }
@@ -37,14 +40,14 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
         val nameBytes = ByteArray(31)
         buffer.get(nameBytes)
         val name = String(nameBytes, Charsets.UTF_8).trim(0x00.toChar())
-        val targetType = TargetType.from(buffer.get().toUByte())
-        val targetId = buffer.getShort()
+        val targetType = TargetType.from(buffer.getUByte())
+        val targetId = buffer.getUShort()
         val triggerType = TriggerType.from(
-            buffer.get().toUByte()
+            buffer.getUByte()
         )
-        val triggerItem = buffer.get().toUByte()
-        val triggerCone = buffer.getShort().toUShort()
-        val padding = buffer.getShort().toUShort()
+        val triggerItem = buffer.getUByte()
+        val triggerCone = buffer.getUShort()
+        val padding = buffer.getUShort()
         val triggerRectWE = buffer.getFloat()
         val triggerRectNS = buffer.getFloat()
 
@@ -52,24 +55,24 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
 
         val condition = EvtCondition(
             compareType = CompareType.from(
-                buffer.getShort().toUShort()
+                buffer.getUShort()
             ),
-            compareId = buffer.getShort().toUShort(),
-            comparedValue = buffer.getShort().toUShort(),
+            compareId = buffer.getUShort(),
+            comparedValue = buffer.getUShort(),
             comparisonType = ComparisonType.from(
-                buffer.getShort().toUShort()
+                buffer.getUShort()
             )
         )
 
         val pages = (1..16).map {
-            val payloadOffset = buffer.getInt().toUInt()
+            val payloadOffset = buffer.getUInt()
             val compareType = CompareType.from(
-                buffer.getShort().toUShort()
+                buffer.getUShort()
             )
-            val compareId = buffer.getShort().toUShort()
-            val comparedValue = buffer.getShort().toUShort()
+            val compareId = buffer.getUShort()
+            val comparedValue = buffer.getUShort()
             val comparisonType = ComparisonType.from(
-                buffer.getShort().toUShort()
+                buffer.getUShort()
             )
             EvtPage(
                 payloadOffset = payloadOffset,
@@ -89,7 +92,7 @@ class BinaryBufferReader(val buffer: ByteBuffer) {
             triggerType = triggerType,
             triggerItem = triggerItem,
             triggerCone = triggerCone,
-            padding = padding.toHexString().toByteArray().toList(),
+            padding = padding,
             triggerRectWE = triggerRectWE,
             triggerRectNS = triggerRectNS,
             triggerRadius = triggerRadius,
