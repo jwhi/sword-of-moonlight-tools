@@ -3,7 +3,6 @@ import com.jwhi.som.domains.evt.ComparisonType
 import com.jwhi.som.domains.evt.EvtCondition
 import com.jwhi.som.domains.evt.EvtOpDisplayMessage
 import com.jwhi.som.domains.evt.EvtOpIfMessage
-import com.jwhi.som.domains.evt.EvtOpGeneric
 import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.evt.EvtOpPlayerParameters
 import com.jwhi.som.domains.evt.EvtOpSetPlayerParameterInCounter
