@@ -4,6 +4,8 @@ Parses files for [Sword of Moonlight: The King's Field Making Tool](https://doc.
 
 Goal of this project is to give insight into map events and verify counters being modified and where those counters are checked to flag breaking changes.
 
+Example project being used to validate parsing is stored in `/src/main/resources`. Full project files provided that can be opened in Sword of Moonlight.
+
 ## Current Progress
 1. Parse map `.evt` files
    1. Load event definitions and pages
