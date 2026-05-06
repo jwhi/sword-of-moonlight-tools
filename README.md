@@ -1,8 +1,18 @@
 # Sword of Moonlight Tools
 
-Parses files for *Sword of Moonlight* into Kotlin classes to allow automated testing and validation.
+Parses files for [Sword of Moonlight: The King's Field Making Tool](https://doc.swordofmoonlight.com/) into Kotlin classes to allow automated testing and validation.
 
 Goal of this project is to give insight into map events and verify counters being modified and where those counters are checked to flag breaking changes.
+
+## Current Progress
+1. Parse map `.evt` files
+   1. Load event definitions and pages
+   2. Load operations within pages (IN PROGRESS)
+
+## Future
+1. Load in item, NPC, enemy, object, etc. params to have full instead of just the id stored in the map's `.evt`
+2. Load in counter names from `SYS.dat` in addition to counter id.
+3. Map data to better structured objects to allow better testing.
 
 ## Gradle Information
 This project uses [Gradle](https://gradle.org/).
