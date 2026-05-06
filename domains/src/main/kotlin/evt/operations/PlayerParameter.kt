@@ -7,6 +7,7 @@ enum class PlayerParameter(val value: UByte) {
     MAGIC_STAT(0x03u),
     ITEM_QUANTITY(0x04u),
     GOLD_AMOUNT(0x05u),
+    // Not allowed to update through Change Player Parameter operation
     LEVEL(0x06u);
 
     companion object {
