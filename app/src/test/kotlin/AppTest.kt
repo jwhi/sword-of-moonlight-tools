@@ -8,6 +8,7 @@ import com.jwhi.som.domains.evt.operations.PlayerParameter
 import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
+import com.jwhi.som.domains.evt.operations.UnimplementedOperation
 import com.jwhi.som.domains.reader.BinaryBufferReader
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.withClue
@@ -83,6 +84,26 @@ class AppTest : FunSpec({
                 "Save Point",
                 "Set Gold to # both herbs held",
                 "RED BOTTLE USE"
+            )
+        }
+
+        test("Get all operations and validate they are defined") {
+            val operations = filteredEvents.flatMap { it.pageOperations.values }.flatten()
+            val unimplementedOperations = operations.filterIsInstance<UnimplementedOperation>()
+            val unimplementedOpIds = unimplementedOperations.map { it.opId.toUInt() }.toSet()
+
+            operations shouldHaveSize 147
+            unimplementedOperations shouldHaveSize 11
+            unimplementedOpIds shouldBe setOf(
+                20u,
+                21u,
+                22u,
+                27u,
+                28u,
+                42u,
+                121u,
+                149u,
+                150u
             )
         }
 

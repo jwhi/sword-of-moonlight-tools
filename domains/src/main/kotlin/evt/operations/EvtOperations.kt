@@ -15,7 +15,6 @@ import java.nio.ByteBuffer
 interface EvtOperation {
     // Operation ID. See operation definitions below for valid/known values.
     val opId: UShort
-
     // Size of the operation (including the EVT_OPCODE.)
     val opSize: UShort
     // Debug to view and validate bytes
@@ -47,6 +46,12 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
             buffer = pageBuffer
         )
         EvtOpIds.SHOP_OPEN.value -> ShopOpen.fromByteBuffer(pageBuffer)
+        EvtOpIds.WARP_NPC.value -> WarpNPC.fromByteBuffer(pageBuffer)
+        EvtOpIds.WARP_ENEMY.value -> WarpEnemy.fromByteBuffer(pageBuffer)
+        EvtOpIds.BEGIN_SCREEN_EFFECT.value -> BeginScreenEffect.fromByteBuffer(pageBuffer)
+        EvtOpIds.END_SCREEN_EFFECT.value -> EndScreenEffect.fromByteBuffer(pageBuffer)
+        EvtOpIds.WARP_PLAYER.value -> WarpPlayer.fromByteBuffer(pageBuffer)
+        EvtOpIds.CHANGE_PLAYER_PARAMETER.value -> ChangePlayerParameter.fromByteBuffer(pageBuffer)
         EvtOpIds.SET_PLAYER_PARAMETER_IN_COUNTER.value -> SetPlayerParameterInCounter.fromByteBuffer(
             opId = opId,
             opSize = opSize,
