@@ -98,7 +98,7 @@ class AppTest : FunSpec({
             }.toMap()
 
             operations shouldHaveSize 147
-            unimplementedOperations shouldHaveSize 11
+            unimplementedOperations shouldHaveSize 10
             unimplementedOpIds shouldBe mapOf(
                 20u to 8u,
                 21u to 8u,
@@ -106,7 +106,6 @@ class AppTest : FunSpec({
                 27u to 8u,
                 28u to 8u,
                 42u to 32u,
-                121u to 4u,
                 149u to 8u,
                 150u to 8u
             )
@@ -119,11 +118,8 @@ class AppTest : FunSpec({
                 "Activate Item (0004 FirDagger)" to listOf(22u),
                 "Terminate NPC (2 Bandit)" to listOf(27u),
                 "Terminate Enemy (2 Ooze)" to listOf(28u),
-                "DISPLAY BMP" to listOf(42u, 42u),
-                "Save Point" to listOf(121u)
+                "DISPLAY BMP" to listOf(42u, 42u)
             )
-
-
         }
 
         test("Validate display operation") {
