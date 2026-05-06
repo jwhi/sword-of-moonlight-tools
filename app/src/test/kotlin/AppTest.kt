@@ -90,21 +90,40 @@ class AppTest : FunSpec({
         test("Get all operations and validate they are defined") {
             val operations = filteredEvents.flatMap { it.pageOperations.values }.flatten()
             val unimplementedOperations = operations.filterIsInstance<UnimplementedOperation>()
-            val unimplementedOpIds = unimplementedOperations.map { it.opId.toUInt() }.toSet()
+            val unimplementedOpIds = unimplementedOperations.map { it.opId.toUInt() to it.opSize.toUInt() }.toSet().toMap()
+            val eventsWithUnimplementedOps = filteredEvents.map {
+                it.definition.name to it.pageOperations.values.flatten().filterIsInstance<UnimplementedOperation>().map { it.opId.toUInt() }
+            }.filter {
+                it.second.isNotEmpty()
+            }.toMap()
 
             operations shouldHaveSize 147
             unimplementedOperations shouldHaveSize 11
-            unimplementedOpIds shouldBe setOf(
-                20u,
-                21u,
-                22u,
-                27u,
-                28u,
-                42u,
-                121u,
-                149u,
-                150u
+            unimplementedOpIds shouldBe mapOf(
+                20u to 8u,
+                21u to 8u,
+                22u to 8u,
+                27u to 8u,
+                28u to 8u,
+                42u to 32u,
+                121u to 4u,
+                149u to 8u,
+                150u to 8u
             )
+
+            eventsWithUnimplementedOps shouldBe mapOf(
+                "Heal Bump" to listOf(149u),
+                "Timer Enable Bandit" to listOf(150u, 20u),
+                "Activate NPC (Bandit)" to listOf(20u),
+                "Activate Enemy (0002 Ooze)" to listOf(21u),
+                "Activate Item (0004 FirDagger)" to listOf(22u),
+                "Terminate NPC (2 Bandit)" to listOf(27u),
+                "Terminate Enemy (2 Ooze)" to listOf(28u),
+                "DISPLAY BMP" to listOf(42u, 42u),
+                "Save Point" to listOf(121u)
+            )
+
+
         }
 
         test("Validate display operation") {

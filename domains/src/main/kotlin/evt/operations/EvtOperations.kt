@@ -57,6 +57,7 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
             opSize = opSize,
             buffer = pageBuffer
         )
+        EvtOpIds.SAVE_POINT.value -> SavePoint(bytes = pageBuffer.array().toList())
         EvtOpIds.IF_COUNTER_CONDITION.value -> IfCounterCondition.fromByteBuffer(
             opId = opId,
             opSize = opSize,
