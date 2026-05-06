@@ -5,6 +5,7 @@ import com.jwhi.som.domains.evt.operations.DisplayMessage
 import com.jwhi.som.domains.evt.operations.DisplayFormattedMessage
 import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.evt.operations.ChangeCounter
+import com.jwhi.som.domains.evt.operations.ChangePlayerParameter
 import com.jwhi.som.domains.evt.operations.IfCounterCondition
 import com.jwhi.som.domains.evt.operations.IfMessagePrompt
 import com.jwhi.som.domains.evt.operations.PlayerParameter
@@ -14,9 +15,11 @@ import com.jwhi.som.domains.evt.operations.WayChanged
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.byteArrayFrom
 import com.jwhi.som.domains.helpers.getUShort
+import io.kotest.core.Tuple3
 import io.kotest.core.Tuple4
 import io.kotest.core.Tuple5
 import io.kotest.core.Tuple6
+import io.kotest.core.Tuple7
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -90,6 +93,90 @@ class EvtOperationsTest : FunSpec({
         actual shouldBe expected
         opId shouldBe expected.opId
         opSize shouldBe expected.opSize
+    }
+
+    context("Change Player Parameters") {
+        withData(
+            // // Change Player Parameter
+            // // UnimplementedOperation(opId=80, opSize=12, bytes=[80, 0, 12, 0, 5, 3, 0, 0, 0, 0, -4, 3])
+            // // Set gold to counter
+            // // 80u, 0u, 12u, 0u, 5u, 3u, 0u, 0u, 0u, 0u, 252u, 3u
+            //
+            // // UnimplementedOperation(opId=80, opSize=12, bytes=[80, 0, 12, 0, 0, 1, 0, 0, 0, 0, 5, 0])
+            // // Increase health by 5
+            //
+// (opId=80, opSize=12, bytes=[80, 0, 12, 0, 4, 2, 0, 0, 0, 0, 1, 0])
+// 50 00
+// 0C 00
+// 05 Gold
+// 03 SET TO COUNTER
+// 00 item id
+// 00 00 00
+// FC 03 COUNTER 1020 that setting gold to
+
+// 50 00
+// 0C 00
+// 04 ITEM QTY
+// 02 DECREMENT BY
+// 00 00 item id?
+// 00 00
+// 01 00 value
+//
+// 50 00
+// 0C 00
+// 04
+// 03 SET TO COUNTER
+// F9 00 item id
+// 00 00
+// F9 00 value
+
+            nameFn = { it.a },
+            Tuple6(
+                "Increase health by set value of 5",
+                byteArrayFrom(80u, 0u, 12u, 0u, 0u, 1u, 0u, 0u, 0u, 0u, 5u, 0u),
+                PlayerParameter.HP,
+                WayChanged.INCREMENT_BY,
+                0u,
+                5u
+            ),
+            Tuple6(
+                "Set Gold to another counter's value",
+                byteArrayFrom(80u, 0u, 12u, 0u, 5u, 3u, 0u, 0u, 0u, 0u, 252u, 3u),
+                PlayerParameter.GOLD_AMOUNT,
+                WayChanged.COUNTER,
+                0u,
+                1020u
+            ),
+            Tuple6(
+                "Set item quantity to counter of the same id",
+                byteArrayFrom(80u, 0u, 12u, 0u, 4u, 3u, 249u, 0u, 0u, 0u, 249u, 0u),
+                PlayerParameter.ITEM_QUANTITY,
+                WayChanged.COUNTER,
+                249u,
+                249u
+            )
+        ) { (_, bytes, playerParameter, wayChanged, itemId, value) ->
+            val byteBuffer = bytes.asBufferLittleEndian()
+            val expected = ChangePlayerParameter(
+                opId = EvtOpIds.CHANGE_PLAYER_PARAMETER.value,
+                opSize = 12u,
+                playerParameter = playerParameter,
+                wayChanged = wayChanged,
+                itemId = itemId.toUShort(),
+                value = value.toUShort(),
+                bytes = bytes.toList()
+            )
+
+            val actualOpId = byteBuffer.getUShort()
+            val actualOpSize = byteBuffer.getUShort()
+            val actual = ChangePlayerParameter.fromByteBuffer(
+                byteBuffer
+            )
+
+            actual shouldBe expected
+            actualOpId shouldBe expected.opId
+            actualOpSize shouldBe expected.opSize
+        }
     }
 
     context("Set Player Parameter To Counter from bytes") {
@@ -217,7 +304,6 @@ class EvtOperationsTest : FunSpec({
         withData(
             nameFn = { it.a },
             Tuple6(
-                // ChangeCounter(opId=144, opSize=12, counterId=777, value=1, valueIsCounterId=false, wayChanged=SET_TO, unimplementedBytes=0, bytes=[-112, 0, 12, 0, 9, 3, 1, 0, 0, 0, 0, 0])
                 "Set to exact value",
                 byteArrayFrom(144u, 0u, 12u, 0u, 9u, 3u, 1u, 0u, 0u, 0u, 0u, 0u),
                 777u,
@@ -258,14 +344,3 @@ class EvtOperationsTest : FunSpec({
         }
     }
 })
-// ChangeCounter test
-// 144u, 0u, 12u, 0u, 252u, 3u, 254u, 3u, 1u, 1u, 0u, 0u
-// ChangeCounter(opId=144, opSize=12, counterId=1020, exactValue=1022, useTarget=true, wayChanged=INCREMENT_BY, sourceCounter=0, bytes=[-112, 0, 12, 0, -4, 3, -2, 3, 1, 1, 0, 0])
-
-// Change Player Parameter
-// UnimplementedOperation(opId=80, opSize=12, bytes=[80, 0, 12, 0, 5, 3, 0, 0, 0, 0, -4, 3])
-// Set gold to counter
-// 80u, 0u, 12u, 0u, 5u, 3u, 0u, 0u, 0u, 0u, 252u, 3u
-
-// UnimplementedOperation(opId=80, opSize=12, bytes=[80, 0, 12, 0, 0, 1, 0, 0, 0, 0, 5, 0])
-// Increase health by 5

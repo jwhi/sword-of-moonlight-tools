@@ -81,7 +81,8 @@ class AppTest : FunSpec({
                 "Player Strength + Magic Check",
                 "Page change tests",
                 "Save Point",
-                "Set Gold to # both herbs held"
+                "Set Gold to # both herbs held",
+                "RED BOTTLE USE"
             )
         }
 
