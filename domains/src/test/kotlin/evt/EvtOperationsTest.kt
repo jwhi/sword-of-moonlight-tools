@@ -1,13 +1,13 @@
 package evt
 
-import com.jwhi.som.domains.evt.EvtOpCompareType
-import com.jwhi.som.domains.evt.EvtOpDisplayMessage
-import com.jwhi.som.domains.evt.EvtOpDisplayMessageFormat
+import com.jwhi.som.domains.evt.operations.CompareType
+import com.jwhi.som.domains.evt.operations.DisplayMessage
+import com.jwhi.som.domains.evt.operations.DisplayFormattedMessage
 import com.jwhi.som.domains.evt.EvtOpIds
-import com.jwhi.som.domains.evt.EvtOpIfCounter
-import com.jwhi.som.domains.evt.EvtOpIfMessage
-import com.jwhi.som.domains.evt.EvtOpPlayerParameters
-import com.jwhi.som.domains.evt.EvtOpSetPlayerParameterInCounter
+import com.jwhi.som.domains.evt.operations.IfCounterCondition
+import com.jwhi.som.domains.evt.operations.IfMessagePrompt
+import com.jwhi.som.domains.evt.operations.PlayerParameter
+import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.getUShort
 import io.kotest.core.Tuple4
@@ -22,8 +22,8 @@ class EvtOperationsTest : FunSpec({
             it.toByte()
         }.toByteArray()
         val byteBuffer = bytes.asBufferLittleEndian()
-        val expected = EvtOpDisplayMessage(
-            opId = EvtOpIds.MESSAGE.value,
+        val expected = DisplayMessage(
+            opId = EvtOpIds.DISPLAY_MESSAGE.value,
             opSize = 16u,
             text = "Thank you!",
             bytes = bytes.toList()
@@ -31,7 +31,7 @@ class EvtOperationsTest : FunSpec({
 
         val actualOpId = byteBuffer.getUShort()
         val actualOpSize = byteBuffer.getUShort()
-        val actual = EvtOpDisplayMessage.fromByteBuffer(
+        val actual = DisplayMessage.fromByteBuffer(
             actualOpId,
             actualOpSize,
             byteBuffer,
@@ -45,8 +45,8 @@ class EvtOperationsTest : FunSpec({
             it.toByte()
         }.toByteArray()
         val byteBuffer = bytes.asBufferLittleEndian()
-        val expected = EvtOpDisplayMessageFormat(
-            opId = EvtOpIds.FORMAT_MESSAGE.value,
+        val expected = DisplayFormattedMessage(
+            opId = EvtOpIds.DISPLAY_FORMATTED_MESSAGE.value,
             opSize = 44u,
             textColorRed = 255u,
             textColorGreen = 0u,
@@ -61,7 +61,7 @@ class EvtOperationsTest : FunSpec({
 
         val actualOpId = byteBuffer.getUShort()
         val actualOpSize = byteBuffer.getUShort()
-        val actual = EvtOpDisplayMessageFormat.fromByteBuffer(
+        val actual = DisplayFormattedMessage.fromByteBuffer(
             actualOpId,
             actualOpSize,
             byteBuffer,
@@ -76,19 +76,19 @@ class EvtOperationsTest : FunSpec({
             Tuple4(
                 "Store strength stat",
                 listOf(84u, 0u, 8u, 0u, 2u, 0u, 5u, 0u),
-                EvtOpPlayerParameters.STRENGTH_STAT,
+                PlayerParameter.STRENGTH_STAT,
                 5u
             ),
             Tuple4(
                 "Store magic stat",
                 listOf(84u, 0u, 8u, 0u, 3u, 0u, 7u, 0u),
-                EvtOpPlayerParameters.MAGIC_STAT,
+                PlayerParameter.MAGIC_STAT,
                 7u
             ),
             Tuple4(
                 "Store HP",
                 listOf(84u, 0u, 8u, 0u, 0u, 0u, 4u, 0u),
-                EvtOpPlayerParameters.HP,
+                PlayerParameter.HP,
                 4u
             )
         ) { (_, unsignedBytes, stat, targetCounter) ->
@@ -96,8 +96,8 @@ class EvtOperationsTest : FunSpec({
                 it.toByte()
             }.toByteArray()
             val byteBuffer = bytes.asBufferLittleEndian()
-            val expected = EvtOpSetPlayerParameterInCounter(
-                opId = EvtOpIds.SET_PLAYER_PARAMETER_TO_COUNTER.value,
+            val expected = SetPlayerParameterInCounter(
+                opId = EvtOpIds.SET_PLAYER_PARAMETER_IN_COUNTER.value,
                 opSize = 8u,
                 playerParameter = stat,
                 itemId = 0u,
@@ -107,7 +107,7 @@ class EvtOperationsTest : FunSpec({
 
             val actualOpId = byteBuffer.getUShort()
             val actualOpSize = byteBuffer.getUShort()
-            val actual = EvtOpSetPlayerParameterInCounter.fromByteBuffer(
+            val actual = SetPlayerParameterInCounter.fromByteBuffer(
                 actualOpId,
                 actualOpSize,
                 byteBuffer
@@ -126,7 +126,7 @@ class EvtOperationsTest : FunSpec({
                 4u,
                 100u,
                 false,
-                EvtOpCompareType.LESS_THAN
+                CompareType.LESS_THAN
             ),
             Tuple6(
                 "Compare > another counter's value",
@@ -134,15 +134,15 @@ class EvtOperationsTest : FunSpec({
                 6u,
                 7u,
                 true,
-                EvtOpCompareType.GREATER_THAN
+                CompareType.GREATER_THAN
             )
         ) { (_, unsignedBytes, counterId, compareValue, valueIsCounterId, compareType) ->
             val bytes = unsignedBytes.map {
                 it.toByte()
             }.toByteArray()
             val byteBuffer = bytes.asBufferLittleEndian()
-            val expected = EvtOpIfCounter(
-                opId = EvtOpIds.IF_COUNTER.value,
+            val expected = IfCounterCondition(
+                opId = EvtOpIds.IF_COUNTER_CONDITION.value,
                 opSize = 12u,
                 counterId = counterId.toUShort(),
                 value = compareValue.toUShort(),
@@ -153,7 +153,7 @@ class EvtOperationsTest : FunSpec({
 
             val actualOpId = byteBuffer.getUShort()
             val actualOpSize = byteBuffer.getUShort()
-            val actual = EvtOpIfCounter.fromByteBuffer(
+            val actual = IfCounterCondition.fromByteBuffer(
                 actualOpId,
                 actualOpSize,
                 byteBuffer
@@ -168,8 +168,8 @@ class EvtOperationsTest : FunSpec({
             it.toByte()
         }.toByteArray()
         val byteBuffer = bytes.asBufferLittleEndian()
-        val expected = EvtOpIfMessage(
-            opId = EvtOpIds.IF_MESSAGE.value,
+        val expected = IfMessagePrompt(
+            opId = EvtOpIds.IF_MESSAGE_PROMPT.value,
             opSize = 56u,
             text = "You have so many healing herbs! \r\n" +
                 "Gimme one?",
@@ -180,7 +180,7 @@ class EvtOperationsTest : FunSpec({
 
         val actualOpId = byteBuffer.getUShort()
         val actualOpSize = byteBuffer.getUShort()
-        val actual = EvtOpIfMessage.fromByteBuffer(
+        val actual = IfMessagePrompt.fromByteBuffer(
             actualOpId,
             actualOpSize,
             byteBuffer,

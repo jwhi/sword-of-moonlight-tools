@@ -9,7 +9,7 @@ import com.jwhi.som.domains.evt.EvtDefinition
 import com.jwhi.som.domains.evt.EvtPage
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
-import com.jwhi.som.domains.evt.parseEvtOperation
+import com.jwhi.som.domains.evt.operations.parseEvtOperation
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.getEvtOperationsBuffers
 import com.jwhi.som.domains.helpers.getUByte

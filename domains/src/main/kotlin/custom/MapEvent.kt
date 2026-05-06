@@ -1,7 +1,7 @@
 package com.jwhi.som.domains.custom
 
 import com.jwhi.som.domains.evt.EvtDefinition
-import com.jwhi.som.domains.evt.EvtOperation
+import com.jwhi.som.domains.evt.operations.EvtOperation
 
 data class MapEvent(
     val definition: EvtDefinition,
