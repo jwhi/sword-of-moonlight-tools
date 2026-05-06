@@ -1,4 +1,4 @@
-# tools
+# Sword of Moonlight Tools
 
 Parses files for *Sword of Moonlight* into Kotlin classes to allow automated testing and validation.
 
