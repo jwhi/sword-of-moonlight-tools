@@ -3,6 +3,7 @@ package com.jwhi.som.domains.evt
 enum class EvtOpIds(val value: UShort) {
     DISPLAY_MESSAGE(0u),
     DISPLAY_FORMATTED_MESSAGE(1u),
+    SHOP_OPEN(23u),
     SET_PLAYER_PARAMETER_IN_COUNTER(84u),
     IF_COUNTER_CONDITION(140u),
     IF_MESSAGE_PROMPT(141u),

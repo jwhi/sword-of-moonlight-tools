@@ -46,6 +46,7 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
             opSize = opSize,
             buffer = pageBuffer
         )
+        EvtOpIds.SHOP_OPEN.value -> ShopOpen.fromByteBuffer(pageBuffer)
         EvtOpIds.SET_PLAYER_PARAMETER_IN_COUNTER.value -> SetPlayerParameterInCounter.fromByteBuffer(
             opId = opId,
             opSize = opSize,

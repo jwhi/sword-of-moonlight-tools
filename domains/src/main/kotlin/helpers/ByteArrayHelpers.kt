@@ -61,3 +61,6 @@ fun ByteBuffer.getUInt() = this.getInt().toUInt()
 fun allocateLittleEndianByteBuffer(size: Int): ByteBuffer = ByteBuffer.allocate(size).order(ByteOrder.LITTLE_ENDIAN)
 
 fun ByteArray.asBufferLittleEndian(): ByteBuffer = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN)
+
+@OptIn(ExperimentalUnsignedTypes::class)
+fun byteArrayFrom(vararg elements: UShort): ByteArray = elements.map { it.toByte() }.toByteArray()
