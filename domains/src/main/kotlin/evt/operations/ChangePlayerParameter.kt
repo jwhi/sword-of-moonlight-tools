@@ -10,7 +10,7 @@ data class ChangePlayerParameter(
     override val opSize: UShort = 12u,
     val playerParameter: PlayerParameter,
     val wayChanged: WayChanged,
-    val itemId: UShort,
+    val itemId: UShort = 0u,
     val unimplementedBytes: UShort = 0u,
     val value: UShort,
     override val bytes: List<Byte>

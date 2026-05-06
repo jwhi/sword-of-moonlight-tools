@@ -68,8 +68,8 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
             opSize = opSize,
             buffer = pageBuffer
         )
-        EvtOpIds.OTHERWISE.value -> Otherwise()
-        EvtOpIds.END_IF.value -> EndIf()
+        EvtOpIds.OTHERWISE.value -> Otherwise(bytes = pageBuffer.array().toList())
+        EvtOpIds.END_IF.value -> EndIf(bytes = pageBuffer.array().toList())
         EvtOpIds.CHANGE_COUNTER.value -> ChangeCounter.fromByteBuffer(
             opId = opId,
             opSize = opSize,
@@ -80,7 +80,7 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
             opSize = opSize,
             buffer = pageBuffer
         )
-        EvtOpIds.END.value -> OperationEnd()
+        EvtOpIds.END.value -> OperationEnd(bytes = pageBuffer.array().toList())
         else -> UnimplementedOperation(
             opId = opId,
             opSize = opSize,

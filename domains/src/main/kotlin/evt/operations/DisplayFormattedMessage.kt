@@ -13,10 +13,10 @@ data class DisplayFormattedMessage(
     val textColorRed: UByte,
     val textColorGreen: UByte,
     val textColorBlue: UByte,
-    val textColorExtraByte: UByte,
+    val textColorExtraByte: UByte = 0u,
     // GDI font weight (0-550 = Normal, 551-999 Bold)
     val fontWeight: UShort,
-    val fontWeightExtraBytes: UShort,
+    val fontWeightExtraBytes: UShort = 0u,
     val text: String,
     val fontName: String,
     override val bytes: List<Byte> = emptyList()

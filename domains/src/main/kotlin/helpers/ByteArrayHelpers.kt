@@ -64,3 +64,7 @@ fun ByteArray.asBufferLittleEndian(): ByteBuffer = ByteBuffer.wrap(this).order(B
 
 @OptIn(ExperimentalUnsignedTypes::class)
 fun byteArrayFrom(vararg elements: UShort): ByteArray = elements.map { it.toByte() }.toByteArray()
+
+fun byteArrayFrom(vararg elements: Number): ByteArray = byteListFrom(*elements).toByteArray()
+
+fun byteListFrom(vararg elements: Number): List<Byte> = elements.map { it.toByte() }

@@ -8,7 +8,7 @@ data class ShopOpen(
     override val opId: UShort = EvtOpIds.SHOP_OPEN.value,
     override val opSize: UShort = 8u,
     val shopId: UShort,
-    val additionalBytes: UShort,
+    val additionalBytes: UShort = 0u,
     override val bytes: List<Byte>
 ): EvtOperation {
     companion object {
