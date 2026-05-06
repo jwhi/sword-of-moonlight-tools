@@ -13,5 +13,6 @@ enum class PlayerParameter(val value: UByte) {
     companion object {
         private val mappings = entries.associateBy(PlayerParameter::value)
         fun from(byte: UByte): PlayerParameter = mappings[byte]!!
+        fun from(uShortValue: UShort): PlayerParameter = mappings[uShortValue.toUByte()]!!
     }
 }

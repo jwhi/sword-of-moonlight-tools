@@ -1,6 +1,7 @@
 package com.jwhi.som.domains.evt.operations
 
 import com.jwhi.som.domains.helpers.getUByte
+import com.jwhi.som.domains.helpers.getUShort
 import java.nio.ByteBuffer
 import kotlin.toUShort
 
@@ -23,7 +24,7 @@ data class SetPlayerParameterInCounter(
                 opSize = opSize,
                 playerParameter = PlayerParameter.from(buffer.getUByte()),
                 itemId = buffer.getUByte(),
-                targetCounter = buffer.get().toUShort(),
+                targetCounter = buffer.getUShort(),
                 bytes = buffer.array().toList()
             )
         }

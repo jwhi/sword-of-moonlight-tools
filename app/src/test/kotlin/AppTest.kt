@@ -21,15 +21,16 @@ class AppTest : FunSpec({
         val inputFile = "/ExampleProject/DATA/MAP/00.evt"
         val bufferReader = BinaryBufferReader(inputFile)
         val evtEvents = bufferReader.readMapEvent()
+        val filteredEvents = evtEvents.filter {
+            it.definition.targetType != TargetType.NONE
+        }
 
         test("Event length") {
             evtEvents.size shouldBe 251
         }
 
         test("Defined events") {
-            val definedEvents = evtEvents.filter {
-                it.definition.targetType != TargetType.NONE
-            }.map {
+            val definedEvents = filteredEvents.map {
                 it.definition.name
             }
 
@@ -79,7 +80,8 @@ class AppTest : FunSpec({
                 "IF MESSAGE",
                 "Player Strength + Magic Check",
                 "Page change tests",
-                "Save Point"
+                "Save Point",
+                "Set Gold to # both herbs held"
             )
         }
 

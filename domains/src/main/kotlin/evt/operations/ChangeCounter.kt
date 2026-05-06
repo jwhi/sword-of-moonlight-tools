@@ -10,12 +10,12 @@ data class ChangeCounter(
     override val opId: UShort = 144u,
     override val opSize: UShort = 12u,
     val counterId: UShort,
-    val exactValue: UShort,
+    val value: UShort,
     // When 0 = use exact value,
     // when 1 = use value from sourceCounter
-    val useTarget: Boolean,
+    val valueIsCounterId: Boolean,
     val wayChanged: WayChanged,
-    val sourceCounter: UShort,
+    val unimplementedBytes: UShort,
     override val bytes: List<Byte> = emptyList()
 ): EvtOperation {
     companion object {
@@ -28,10 +28,10 @@ data class ChangeCounter(
                 opId = opId,
                 opSize = opSize,
                 counterId = buffer.getUShort(),
-                exactValue = buffer.getUShort(),
-                useTarget = buffer.get() == 0x01.toByte(),
+                value = buffer.getUShort(),
+                valueIsCounterId = buffer.get() == 0x01.toByte(),
                 wayChanged = WayChanged.from(buffer.getUByte()),
-                sourceCounter = buffer.getUShort(),
+                unimplementedBytes = buffer.getUShort(),
                 bytes = buffer.array().toList()
             )
         }
