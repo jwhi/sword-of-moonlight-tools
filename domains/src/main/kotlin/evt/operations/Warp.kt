@@ -80,7 +80,6 @@ data class WarpPlayer(
     val x: UByte,
     val z: UByte,
     val direction: UShort,
-    val unimplemented: UShort,
     val fineX: Float,
     val fineY: Float,
     val fineZ: Float,
@@ -89,6 +88,43 @@ data class WarpPlayer(
     companion object {
         fun fromByteBuffer(buffer: ByteBuffer): WarpPlayer {
             return WarpPlayer(
+                x = buffer.getUByte(),
+                z = buffer.getUByte(),
+                direction = buffer.getUShort(),
+                unimplemented = buffer.getUShort(),
+                fineX = buffer.getFloat(),
+                fineY = buffer.getFloat(),
+                fineZ = buffer.getFloat(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
+
+/*
+3C 00
+1C 00
+3F 01
+FF 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+3C 00 1C 00 3F 00 01 02 5E 04 FB 00 00 00 80 BF 00 00 A0 41 00 00 80 3F 0F 00 00 00
+
+ */
+data class WarpPlayerDetailed(
+    override val opId: UShort = EvtOpIds.WARP_PLAYER_DETAILED.value,
+    override val opSize: UShort = 24u,
+    val x: UByte,
+    val z: UByte,
+    val direction: UShort,
+    val unimplemented: UShort = 0u,
+    val fineX: Float,
+    val fineY: Float,
+    val fineZ: Float,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(buffer: ByteBuffer): WarpPlayerDetailed {
+            return WarpPlayerDetailed(
                 x = buffer.getUByte(),
                 z = buffer.getUByte(),
                 direction = buffer.getUShort(),

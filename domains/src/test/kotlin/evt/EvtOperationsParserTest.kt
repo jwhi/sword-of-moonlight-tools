@@ -11,6 +11,8 @@ import com.jwhi.som.domains.evt.operations.PlayerParameter
 import com.jwhi.som.domains.evt.operations.SavePoint
 import com.jwhi.som.domains.evt.operations.ScreenEffectType
 import com.jwhi.som.domains.evt.operations.ShopOpen
+import com.jwhi.som.domains.evt.operations.WarpPlayer
+import com.jwhi.som.domains.evt.operations.WarpPlayerDetailed
 import com.jwhi.som.domains.evt.operations.WayChanged
 import com.jwhi.som.domains.evt.operations.parseEvtOperation
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
@@ -60,6 +62,18 @@ class EvtOperationsParserTest : FunSpec({
                     effectType = ScreenEffectType.RED,
                     loop = true,
                     bytes = listOf(40, 0, 8, 0, 4, 1, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3D, 0x00, 0x18, 0x00, 0x1A, 0x63, 0x28, 0x00, 0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0xA0, 0xC1, 0x33, 0x33, 0x33, 0xBF, 0x0F, 0x00, 0x00, 0x00),
+                WarpPlayer(
+                    x = 26u,
+                    z = 99u,
+                    direction = 40u,
+                    fineX = 0f,
+                    fineY = 0f,
+                    fineZ = 0f,
+                    bytes = listOf()
                 )
             ),
             Tuple2(
