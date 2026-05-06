@@ -97,39 +97,6 @@ class EvtOperationsTest : FunSpec({
 
     context("Change Player Parameters") {
         withData(
-            // // Change Player Parameter
-            // // UnimplementedOperation(opId=80, opSize=12, bytes=[80, 0, 12, 0, 5, 3, 0, 0, 0, 0, -4, 3])
-            // // Set gold to counter
-            // // 80u, 0u, 12u, 0u, 5u, 3u, 0u, 0u, 0u, 0u, 252u, 3u
-            //
-            // // UnimplementedOperation(opId=80, opSize=12, bytes=[80, 0, 12, 0, 0, 1, 0, 0, 0, 0, 5, 0])
-            // // Increase health by 5
-            //
-// (opId=80, opSize=12, bytes=[80, 0, 12, 0, 4, 2, 0, 0, 0, 0, 1, 0])
-// 50 00
-// 0C 00
-// 05 Gold
-// 03 SET TO COUNTER
-// 00 item id
-// 00 00 00
-// FC 03 COUNTER 1020 that setting gold to
-
-// 50 00
-// 0C 00
-// 04 ITEM QTY
-// 02 DECREMENT BY
-// 00 00 item id?
-// 00 00
-// 01 00 value
-//
-// 50 00
-// 0C 00
-// 04
-// 03 SET TO COUNTER
-// F9 00 item id
-// 00 00
-// F9 00 value
-
             nameFn = { it.a },
             Tuple6(
                 "Increase health by set value of 5",
@@ -154,8 +121,16 @@ class EvtOperationsTest : FunSpec({
                 WayChanged.COUNTER,
                 249u,
                 249u
+            ),
+            Tuple6(
+                "Decrease herb (0) item quantity by set value of 1",
+                byteArrayFrom(80u, 0u, 12u, 0u, 4u, 3u, 0u, 0u, 0u, 0u, 1u, 0u),
+                PlayerParameter.ITEM_QUANTITY,
+                WayChanged.COUNTER,
+                0u,
+                1u
             )
-        ) { (_, bytes, playerParameter, wayChanged, itemId, value) ->
+            ) { (_, bytes, playerParameter, wayChanged, itemId, value) ->
             val byteBuffer = bytes.asBufferLittleEndian()
             val expected = ChangePlayerParameter(
                 opId = EvtOpIds.CHANGE_PLAYER_PARAMETER.value,
