@@ -1,6 +1,9 @@
 package evt
 
 import com.jwhi.som.domains.evt.EvtOpIds
+import com.jwhi.som.domains.evt.operations.ActivateEnemy
+import com.jwhi.som.domains.evt.operations.ActivateItem
+import com.jwhi.som.domains.evt.operations.ActivateNPC
 import com.jwhi.som.domains.evt.operations.ChangeCounter
 import com.jwhi.som.domains.evt.operations.ChangePlayerParameter
 import com.jwhi.som.domains.evt.operations.CompareType
@@ -30,6 +33,7 @@ import io.kotest.datatest.withData
 import io.kotest.matchers.floats.plusOrMinus
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import sun.security.krb5.Confounder.bytes
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class EvtOperationsTest : FunSpec({
@@ -179,6 +183,39 @@ class EvtOperationsTest : FunSpec({
             val opId = buffer.getUShort()
             val opSize = buffer.getUShort()
             val actual = WarpEnemy.fromByteBuffer(buffer)
+
+            actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
+        }
+    }
+
+    context("Activate") {
+        withData(
+            nameFn = { it.b.toString() },
+            Tuple2(
+                byteArrayFrom(0x14u, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                ActivateNPC(npcId = 2u, bytes = listOf(20, 0, 8, 0, 2, 0, 0, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x15u, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                ActivateEnemy(enemyId = 2u, bytes = listOf(21, 0, 8, 0, 2, 0, 0, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x16u, 0x00u, 0x08u, 0x00u, 0x04u, 0x00u, 0x00u, 0x00u),
+                ActivateItem(itemId = 4u, bytes = listOf(22, 0, 8, 0, 4, 0, 0, 0))
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = when (expected) {
+                is ActivateNPC -> ActivateNPC.fromByteBuffer(buffer)
+                is ActivateEnemy -> ActivateEnemy.fromByteBuffer(buffer)
+                is ActivateItem -> ActivateItem.fromByteBuffer(buffer)
+                else -> {}
+            }
 
             actual shouldBe expected
             opId shouldBe expected.opId

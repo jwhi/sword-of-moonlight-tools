@@ -1,5 +1,8 @@
 package evt
 
+import com.jwhi.som.domains.evt.operations.ActivateEnemy
+import com.jwhi.som.domains.evt.operations.ActivateItem
+import com.jwhi.som.domains.evt.operations.ActivateNPC
 import com.jwhi.som.domains.evt.operations.BeginScreenEffect
 import com.jwhi.som.domains.evt.operations.ChangePlayerParameter
 import com.jwhi.som.domains.evt.operations.DisplayFormattedMessage
@@ -84,6 +87,18 @@ class EvtOperationsParserTest : FunSpec({
                     fineZ = 1.0f,
                     bytes = listOf(26, 0, 24, 0, 1, 0, 1, 99, 4, 0, 0, 0, 0, 0, -128, 63, 0, 0, -96, 65, 0, 0, -128, 63)
                 )
+            ),
+            Tuple2(
+                byteArrayFrom(0x14u, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                ActivateNPC(npcId = 2u, bytes = listOf(20, 0, 8, 0, 2, 0, 0, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x15u, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                ActivateEnemy(enemyId = 2u, bytes = listOf(21, 0, 8, 0, 2, 0, 0, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x16u, 0x00u, 0x08u, 0x00u, 0x04u, 0x00u, 0x00u, 0x00u),
+                ActivateItem(itemId = 4u, bytes = listOf(22, 0, 8, 0, 4, 0, 0, 0))
             ),
             Tuple2(
                 byteArrayFrom(0x28, 0x00, 0x08, 0x00, 0x04, 0x01, 0x00, 0x00),
