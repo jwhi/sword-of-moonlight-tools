@@ -11,6 +11,8 @@ import com.jwhi.som.domains.evt.operations.IfMessagePrompt
 import com.jwhi.som.domains.evt.operations.PlayerParameter
 import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
+import com.jwhi.som.domains.evt.operations.WarpEnemy
+import com.jwhi.som.domains.evt.operations.WarpNPC
 import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
 import com.jwhi.som.domains.evt.operations.WarpPlayerDetailed
 import com.jwhi.som.domains.evt.operations.WarpScreenEffect
@@ -98,6 +100,90 @@ class EvtOperationsTest : FunSpec({
         actual shouldBe expected
         opId shouldBe expected.opId
         opSize shouldBe expected.opSize
+    }
+
+    context("Warp NPC") {
+        withData(
+            nameFn = { it.b.toString() },
+            Tuple2(
+                byteArrayFrom(0x19u, 0x00u, 0x18u, 0x00u, 0x02u, 0x00u, 0x5Fu, 0x01u, 0xC8u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x80u, 0xBFu, 0x00u, 0x00u, 0xA0u, 0xC1u, 0x00u, 0x00u, 0x80u, 0x3Fu),
+                WarpNPC(
+                    npcId = 2u,
+                    x = 95u,
+                    z = 1u,
+                    direction = 200u,
+                    fineX = -1.0f,
+                    fineY = -20.0f,
+                    fineZ = 1.0f,
+                    bytes = listOf(25, 0, 24, 0, 2, 0, 95, 1, -56, 0, 0, 0, 0, 0, -128, -65, 0, 0, -96, -63, 0, 0, -128, 63)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x19u, 0x00u, 0x18u, 0x00u, 0x03u, 0x00u, 0x01u, 0x01u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, ),
+                WarpNPC(
+                    npcId = 3u,
+                    x = 1u,
+                    z = 1u,
+                    direction = 0u,
+                    fineX = 0.0f,
+                    fineY = 0.0f,
+                    fineZ = 0.0f,
+                    bytes = listOf(25, 0, 24, 0, 3, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                )
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = WarpNPC.fromByteBuffer(buffer)
+
+            actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
+        }
+    }
+
+    context("Warp Enemy") {
+        withData(
+            nameFn = { it.b.toString() },
+            Tuple2(
+                byteArrayFrom(0x1Au, 0x00u, 0x18u, 0x00u, 0x01u, 0x00u, 0x01u, 0x63u, 0x04u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x80u, 0x3Fu, 0x00u, 0x00u, 0xA0u, 0x41u, 0x00u, 0x00u, 0x80u, 0x3Fu),
+                WarpEnemy(
+                    enemyId = 1u,
+                    x = 1u,
+                    z = 99u,
+                    direction = 4u,
+                    fineX = 1.0f,
+                    fineY = 20.0f,
+                    fineZ = 1.0f,
+                    bytes = listOf(26, 0, 24, 0, 1, 0, 1, 99, 4, 0, 0, 0, 0, 0, -128, 63, 0, 0, -96, 65, 0, 0, -128, 63)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x1Au, 0x00u, 0x18u, 0x00u, 0x00u, 0x00u, 0x63u, 0x5Fu, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u),
+                WarpEnemy(
+                    enemyId = 0u,
+                    x = 99u,
+                    z = 95u,
+                    direction = 0u,
+                    fineX = 0.0f,
+                    fineY = 0.0f,
+                    fineZ = 0.0f,
+                    bytes = listOf(26, 0, 24, 0, 0, 0, 99, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                )
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = WarpEnemy.fromByteBuffer(buffer)
+
+            actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
+        }
     }
 
     context("Warp Player Detailed") {
