@@ -11,7 +11,7 @@ enum class ChangePageType(val value: UByte) {
     SPECIFIC(2u);
 
     companion object {
-        private val mapping = entries.associateBy(ChangePageType::value)
+        private val mapping = entries.associateBy { it.value }
         fun from(byte: UByte): ChangePageType = mapping[byte]!!
     }
 }

@@ -7,7 +7,7 @@ enum class WayChanged(val value: UByte) {
     COUNTER(3u);
 
     companion object {
-        private val mapping = entries.associateBy(WayChanged::value)
+        private val mapping = entries.associateBy { it.value }
         fun from(byte: UByte): WayChanged = mapping[byte]!!
     }
 }

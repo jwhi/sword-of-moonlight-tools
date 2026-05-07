@@ -14,7 +14,7 @@ enum class ScreenEffectType(val value: UByte) {
     BLUE(0x06u);
 
     companion object {
-        private val mapping = entries.associateBy(ScreenEffectType::value)
+        private val mapping = entries.associateBy { it.value }
         fun from(value: UByte) = mapping[value]!!
     }
 }

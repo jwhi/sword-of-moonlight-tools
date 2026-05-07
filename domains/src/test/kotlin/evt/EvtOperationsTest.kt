@@ -11,7 +11,7 @@ import com.jwhi.som.domains.evt.operations.IfMessagePrompt
 import com.jwhi.som.domains.evt.operations.PlayerParameter
 import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
-import com.jwhi.som.domains.evt.operations.WarpPlayer
+import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
 import com.jwhi.som.domains.evt.operations.WayChanged
 import com.jwhi.som.domains.evt.operations.parseEvtOperation
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
@@ -103,7 +103,7 @@ class EvtOperationsTest : FunSpec({
             nameFn = { it.b.toString() },
             Tuple2(
                 byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x1Au, 0x63u, 0x28u, 0x00u, 0x00u, 0x00u, 0x80u, 0x3Fu, 0x00u, 0x00u, 0xA0u, 0xC1u, 0x33u, 0x33u, 0x33u, 0xBFu, 0x0Fu, 0x00u, 0x00u, 0x00u),
-                WarpPlayer(
+                WarpPlayerBasic(
                     x = 26u,
                     z = 99u,
                     direction = 40u,
@@ -119,7 +119,7 @@ class EvtOperationsTest : FunSpec({
             ),
             Tuple2(
                 byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x01u, 0x02u, 0x00u, 0x00u, 0xCDu, 0xCCu, 0xCCu, 0xBEu, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
-                WarpPlayer(
+                WarpPlayerBasic(
                     x = 1u,
                     z = 2u,
                     fineX = -0.4f,
@@ -132,7 +132,7 @@ class EvtOperationsTest : FunSpec({
             ),
             Tuple2(
                 byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x01u, 0x02u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0xCDu, 0xCCu, 0x9Cu, 0xC0u, 0x00u, 0x00u, 0x00u, 0x00u, 0x04u, 0x00u, 0x00u, 0x00u),
-                WarpPlayer(
+                WarpPlayerBasic(
                     x = 1u,
                     z = 2u,
                     fineY = -4.9f,
@@ -145,7 +145,7 @@ class EvtOperationsTest : FunSpec({
             ),
             Tuple2(
                 byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x02u, 0x03u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x67u, 0x66u, 0x66u, 0x3Fu, 0x08u, 0x00u, 0x00u, 0x00u),
-                WarpPlayer(
+                WarpPlayerBasic(
                     x = 2u,
                     z = 3u,
                     fineZ = 0.9f,
@@ -158,7 +158,7 @@ class EvtOperationsTest : FunSpec({
             ),
             Tuple2(
                 byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x05u, 0x06u, 0x96u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
-                WarpPlayer(
+                WarpPlayerBasic(
                     x = 5u,
                     z = 6u,
                     direction = 150u,
@@ -171,7 +171,7 @@ class EvtOperationsTest : FunSpec({
             ),
             Tuple2(
                 byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x0Au, 0x0Fu, 0x00u, 0x00u, 0xCDu, 0xCCu, 0xCCu, 0xBEu, 0x9Au, 0x99u, 0x59u, 0x40u, 0x00u, 0x00u, 0x00u, 0x00u, 0x06u, 0x00u, 0x00u, 0x00u),
-                WarpPlayer(
+                WarpPlayerBasic(
                     x = 10u,
                     z = 15u,
                     fineX = -0.4f,
@@ -185,7 +185,7 @@ class EvtOperationsTest : FunSpec({
             ),
             Tuple2(
                 byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x15u, 0x61u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u),
-                WarpPlayer(
+                WarpPlayerBasic(
                     x = 21u,
                     z = 97u,
                     useDirection = false,
@@ -202,7 +202,7 @@ class EvtOperationsTest : FunSpec({
             val actual = bytes.asBufferLittleEndian().parseEvtOperation(0)
 
             assertSoftly {
-                actual.shouldBeTypeOf<WarpPlayer>()
+                actual.shouldBeTypeOf<WarpPlayerBasic>()
                 actual.x shouldBe expected.x
                 actual.z shouldBe expected.z
                 actual.direction shouldBe expected.direction

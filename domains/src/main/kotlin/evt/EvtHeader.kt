@@ -33,7 +33,7 @@ enum class CompareType(val value: UShort) {
     COUNTER(6u);
 
     companion object {
-        private val mapping = entries.associateBy(CompareType::value)
+        private val mapping = entries.associateBy { it.value }
         fun from(value: UShort) = mapping[value]!! // Or default to ?: NONE
     }
 }
@@ -49,7 +49,7 @@ enum class ComparisonType(val value: UShort) {
     LESS_THAN(3u);
 
     companion object {
-        private val mapping = ComparisonType.entries.associateBy(ComparisonType::value)
+        private val mapping = ComparisonType.entries.associateBy { it.value }
         fun from(value: UShort) = mapping[value]!! // Or default to something
     }
 }
@@ -83,7 +83,7 @@ enum class TargetType(val value: UByte) {
     NONE(0xFFu);
 
     companion object {
-        private val mapping = TargetType.entries.associateBy(TargetType::value)
+        private val mapping = TargetType.entries.associateBy { it.value }
         fun from(value: UByte) = mapping[value]!! // Or default to ?: NONE
     }
 }
@@ -107,8 +107,8 @@ enum class TriggerType(val value: UByte) {
     NONE(0x00u);
 
     companion object {
-        private val mapping = TriggerType.entries.associateBy(TriggerType::value)
-        fun from(value: UByte) = mapping[value]!! // Or default to something
+        private val mapping = TriggerType.entries.associateBy { it.value }
+        fun from(value: UByte) = mapping[value]!!
     }
 }
 

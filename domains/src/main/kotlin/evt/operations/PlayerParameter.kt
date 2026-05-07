@@ -11,7 +11,7 @@ enum class PlayerParameter(val value: UByte) {
     LEVEL(0x06u);
 
     companion object {
-        private val mappings = entries.associateBy(PlayerParameter::value)
+        private val mappings = entries.associateBy { it.value }
         fun from(byte: UByte): PlayerParameter = mappings[byte]!!
     }
 }

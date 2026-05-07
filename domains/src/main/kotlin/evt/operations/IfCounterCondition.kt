@@ -12,8 +12,8 @@ enum class CompareType(val value: UByte) {
     NONE(0xFFu);
 
     companion object {
-        private val mapping = entries.associateBy(CompareType::value)
-        fun from(value: UByte) = mapping[value] ?: NONE // Or default to something
+        private val mapping = entries.associateBy { it.value }
+        fun from(value: UByte) = mapping[value] ?: NONE
     }
 }
 

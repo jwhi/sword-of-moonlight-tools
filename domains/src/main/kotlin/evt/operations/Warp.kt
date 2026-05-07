@@ -35,16 +35,7 @@ data class WarpNPC(
         }
     }
 }
-/*
-28 WarpEne2(x7z69x-.1y-.2z-.5d270
-UnimplementedOperation(
-opId=26, opSize=24, bytes=[26, 0, 24, 0,
-2, 0,
-7,
-69,
-14, 1, 0, 0, -51, -52, -52, -67, -51, -52, 76, -66, 0, 0, 0, -65])
 
- */
 data class WarpEnemy(
     override val opId: UShort = EvtOpIds.WARP_ENEMY.value,
     override val opSize: UShort = 24u,
@@ -76,8 +67,6 @@ data class WarpEnemy(
 }
 
 data class WarpPlayer(
-    override val opId: UShort = EvtOpIds.WARP_PLAYER.value,
-    override val opSize: UShort = 24u,
     val x: UByte,
     val z: UByte,
     val direction: UShort = 0u,
@@ -87,9 +76,8 @@ data class WarpPlayer(
     val useDirection: Boolean,
     val useFineX: Boolean,
     val useFineY: Boolean,
-    val useFineZ: Boolean,
-    override val bytes: List<Byte>
-): EvtOperation {
+    val useFineZ: Boolean
+) {
     companion object {
         fun fromByteBuffer(buffer: ByteBuffer): WarpPlayer {
             val x = buffer.getUByte()
@@ -110,44 +98,122 @@ data class WarpPlayer(
                 useDirection = flags[0],
                 useFineX = flags[1],
                 useFineY = flags[2],
-                useFineZ = flags[3],
+                useFineZ = flags[3]
+            )
+        }
+    }
+}
+
+data class WarpPlayerBasic(
+    override val opId: UShort = EvtOpIds.WARP_PLAYER.value,
+    override val opSize: UShort = 24u,
+    val x: UByte,
+    val z: UByte,
+    val direction: UShort = 0u,
+    val fineX: Float = 0f,
+    val fineY: Float = 0f,
+    val fineZ: Float = 0f,
+    val useDirection: Boolean,
+    val useFineX: Boolean,
+    val useFineY: Boolean,
+    val useFineZ: Boolean,
+    override val bytes: List<Byte>
+): EvtOperation {
+    constructor(warpPlayer: WarpPlayer, bytes: List<Byte>) : this(
+        x = warpPlayer.x,
+        z = warpPlayer.z,
+        direction = warpPlayer.direction,
+        fineX = warpPlayer.fineX,
+        fineY = warpPlayer.fineY,
+        fineZ = warpPlayer.fineZ,
+        useDirection = warpPlayer.useDirection,
+        useFineX = warpPlayer.useFineX,
+        useFineY = warpPlayer.useFineY,
+        useFineZ = warpPlayer.useFineZ,
+        bytes = bytes
+    )
+
+    companion object {
+        fun fromByteBuffer(buffer: ByteBuffer): WarpPlayerBasic {
+            val warpPlayer = WarpPlayer.fromByteBuffer(buffer)
+            return WarpPlayerBasic(
+                warpPlayer = warpPlayer,
                 bytes = buffer.array().toList()
             )
         }
     }
 }
 
-/*
-3C 00
-1C 00
-3F 01
-FF 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+enum class WarpScreenEffect(val value: UByte) {
+    NONE(0xFFu),
+    BLACK_FADES_OFF(0x00u),
+    BLACK_FADES_ON(0x01u),
+    WHITE_FADES_OFF(0x02u),
+    WHITE_FADES_ON(0x03u);
 
-3C 00 1C 00 3F 00 01 02 5E 04 FB 00 00 00 80 BF 00 00 A0 41 00 00 80 3F 0F 00 00 00
+    companion object {
+        private val map = entries.associateBy { it.value }
+        fun from(value: UByte): WarpScreenEffect = map[value]!!
+    }
+}
 
- */
 data class WarpPlayerDetailed(
     override val opId: UShort = EvtOpIds.WARP_PLAYER_DETAILED.value,
     override val opSize: UShort = 24u,
+    val warpToMapId: UByte,
+    val useDefaultStartPoint: Boolean,
+    val screenEffectAsLeave: WarpScreenEffect,
+    val screenEffectAsEnter: WarpScreenEffect,
     val x: UByte,
     val z: UByte,
     val direction: UShort,
-    val unimplemented: UShort = 0u,
     val fineX: Float,
     val fineY: Float,
     val fineZ: Float,
+    val useDirection: Boolean,
+    val useFineX: Boolean,
+    val useFineY: Boolean,
+    val useFineZ: Boolean,
     override val bytes: List<Byte>
 ): EvtOperation {
+    constructor(
+        warpToMapId: UByte,
+        useDefaultStartPoint: Boolean,
+        screenEffectAsLeave: WarpScreenEffect,
+        screenEffectAsEnter: WarpScreenEffect,
+        warpPlayer: WarpPlayer,
+        bytes: List<Byte>
+    ) : this(
+        warpToMapId = warpToMapId,
+        useDefaultStartPoint = useDefaultStartPoint,
+        screenEffectAsLeave = screenEffectAsLeave,
+        screenEffectAsEnter = screenEffectAsEnter,
+        x = warpPlayer.x,
+        z = warpPlayer.z,
+        direction = warpPlayer.direction,
+        fineX = warpPlayer.fineX,
+        fineY = warpPlayer.fineY,
+        fineZ = warpPlayer.fineZ,
+        useDirection = warpPlayer.useDirection,
+        useFineX = warpPlayer.useFineX,
+        useFineY = warpPlayer.useFineY,
+        useFineZ = warpPlayer.useFineZ,
+        bytes = bytes
+    )
+
     companion object {
         fun fromByteBuffer(buffer: ByteBuffer): WarpPlayerDetailed {
+            val warpToMapId = buffer.getUByte()
+            val useDefaultStartPoint = buffer.get() != 0x00.toByte()
+            val screenEffectAsLeave = WarpScreenEffect.from(buffer.getUByte())
+            val screenEffectAsEnter = WarpScreenEffect.from(buffer.getUByte())
+            val warpPlayer = WarpPlayer.fromByteBuffer(buffer)
             return WarpPlayerDetailed(
-                x = buffer.getUByte(),
-                z = buffer.getUByte(),
-                direction = buffer.getUShort(),
-                unimplemented = buffer.getUShort(),
-                fineX = buffer.getFloat(),
-                fineY = buffer.getFloat(),
-                fineZ = buffer.getFloat(),
+                warpToMapId = warpToMapId,
+                useDefaultStartPoint = useDefaultStartPoint,
+                screenEffectAsLeave = screenEffectAsLeave,
+                screenEffectAsEnter = screenEffectAsEnter,
+                warpPlayer = warpPlayer,
                 bytes = buffer.array().toList()
             )
         }

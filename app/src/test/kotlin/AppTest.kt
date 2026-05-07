@@ -101,8 +101,8 @@ class AppTest : FunSpec({
             }.toMap()
 
             assertSoftly {
-                operations shouldHaveSize 160
-                unimplementedOperations shouldHaveSize 12
+                operations shouldHaveSize 166
+                unimplementedOperations shouldHaveSize 16
                 unimplementedOpIds shouldBe mapOf(
                     20u to 8u,
                     21u to 8u,
@@ -124,7 +124,7 @@ class AppTest : FunSpec({
                     "Terminate NPC (2 Bandit)" to listOf(27u),
                     "Terminate Enemy (2 Ooze)" to listOf(28u),
                     "DISPLAY BMP" to listOf(42u, 42u),
-                    "Warp Player Extreme" to listOf(60u, 60u)
+                    "Warp Player Extreme" to listOf(60u, 60u, 60u, 60u, 60u, 60u)
                 )
             }
         }
