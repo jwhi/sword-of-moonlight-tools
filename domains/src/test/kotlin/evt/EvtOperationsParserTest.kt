@@ -12,6 +12,8 @@ import com.jwhi.som.domains.evt.operations.SavePoint
 import com.jwhi.som.domains.evt.operations.ScreenEffectType
 import com.jwhi.som.domains.evt.operations.ShopOpen
 import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
+import com.jwhi.som.domains.evt.operations.WarpPlayerDetailed
+import com.jwhi.som.domains.evt.operations.WarpScreenEffect
 import com.jwhi.som.domains.evt.operations.WayChanged
 import com.jwhi.som.domains.evt.operations.parseEvtOperation
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
@@ -61,6 +63,22 @@ class EvtOperationsParserTest : FunSpec({
                     effectType = ScreenEffectType.RED,
                     loop = true,
                     bytes = listOf(40, 0, 8, 0, 4, 1, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x3Fu, 0x01u, 0xFFu, 0x03u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u),
+                WarpPlayerDetailed(
+                    warpToMapId = 63u,
+                    useDefaultStartPoint = true,
+                    screenEffectAsLeave = WarpScreenEffect.NONE,
+                    screenEffectAsEnter = WarpScreenEffect.WHITE_FADES_ON,
+                    x = 0u,
+                    z = 0u,
+                    useDirection = false,
+                    useFineX = false,
+                    useFineY = false,
+                    useFineZ = false,
+                    bytes = listOf(60, 0, 28, 0, 63, 1, -1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
                 )
             ),
             Tuple2(

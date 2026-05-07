@@ -105,7 +105,7 @@ data class WarpPlayer(
 }
 
 data class WarpPlayerBasic(
-    override val opId: UShort = EvtOpIds.WARP_PLAYER.value,
+    override val opId: UShort = EvtOpIds.WARP_PLAYER_BASIC.value,
     override val opSize: UShort = 24u,
     val x: UByte,
     val z: UByte,
@@ -159,17 +159,17 @@ enum class WarpScreenEffect(val value: UByte) {
 
 data class WarpPlayerDetailed(
     override val opId: UShort = EvtOpIds.WARP_PLAYER_DETAILED.value,
-    override val opSize: UShort = 24u,
+    override val opSize: UShort = 28u,
     val warpToMapId: UByte,
     val useDefaultStartPoint: Boolean,
     val screenEffectAsLeave: WarpScreenEffect,
     val screenEffectAsEnter: WarpScreenEffect,
     val x: UByte,
     val z: UByte,
-    val direction: UShort,
-    val fineX: Float,
-    val fineY: Float,
-    val fineZ: Float,
+    val direction: UShort = 0u,
+    val fineX: Float = 0f,
+    val fineY: Float = 0f,
+    val fineZ: Float = 0f,
     val useDirection: Boolean,
     val useFineX: Boolean,
     val useFineY: Boolean,
@@ -219,21 +219,3 @@ data class WarpPlayerDetailed(
         }
     }
 }
-
-/*
-19 Chair Always On Return WhenLow
-WARP PLAYER 21 97
-fine tuned
-+- x: 0
-+- y: 0
-+- z: 0
-direction: 0-360:0
-UnimplementedOperation(opId=61, opSize=24, bytes=[61, 0, 24, 0, 21, 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-
-WarpNPC2(x6z69x.1y.2z.5d120)
-UnimplementedOperation(opId=25, opSize=24, bytes=[25, 0, 24, 0, 2, 0, 6, 69, 120, 0, 0, 0, -51, -52, -52, 61, -51, -52, 76, 62, 0, 0, 0, 63])
-
-27 WarpNPC2(x6z69x.1y.2z.5d120)
-UnimplementedOperation(opId=25, opSize=24, bytes=[25, 0, 24, 0, 2, 0, 6, 69, 120, 0, 0, 0, -51, -52, -52, 61, -51, -52, 76, 62, 0, 0, 0, 63])
-
- */

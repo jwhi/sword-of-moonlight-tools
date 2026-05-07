@@ -12,12 +12,14 @@ import com.jwhi.som.domains.evt.operations.PlayerParameter
 import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
 import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
+import com.jwhi.som.domains.evt.operations.WarpPlayerDetailed
+import com.jwhi.som.domains.evt.operations.WarpScreenEffect
 import com.jwhi.som.domains.evt.operations.WayChanged
-import com.jwhi.som.domains.evt.operations.parseEvtOperation
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.byteArrayFrom
 import com.jwhi.som.domains.helpers.getUShort
 import io.kotest.assertions.assertSoftly
+import io.kotest.assertions.withClue
 import io.kotest.core.Tuple2
 import io.kotest.core.Tuple5
 import io.kotest.core.Tuple6
@@ -98,7 +100,144 @@ class EvtOperationsTest : FunSpec({
         opSize shouldBe expected.opSize
     }
 
-    context("Warp Player (Basic)") {
+    context("Warp Player Detailed") {
+        withData(
+            nameFn = { it.b.toString() },
+            Tuple2(
+                byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x3Fu, 0x01u, 0xFFu, 0x03u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u),
+                WarpPlayerDetailed(
+                    warpToMapId = 63u,
+                    useDefaultStartPoint = true,
+                    screenEffectAsLeave = WarpScreenEffect.NONE,
+                    screenEffectAsEnter = WarpScreenEffect.WHITE_FADES_ON,
+                    x = 0u,
+                    z = 0u,
+                    useDirection = false,
+                    useFineX = false,
+                    useFineY = false,
+                    useFineZ = false,
+                    bytes = listOf(60, 0, 28, 0, 63, 1, -1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x3Fu, 0x00u, 0x01u, 0x02u, 0x5Eu, 0x04u, 0xFBu, 0x00u, 0x00u, 0x00u, 0x80u, 0xBFu, 0x00u, 0x00u, 0xA0u, 0x41u, 0x00u, 0x00u, 0x80u, 0x3Fu, 0x0Fu, 0x00u, 0x00u, 0x00u),
+                WarpPlayerDetailed(
+                    warpToMapId = 63u,
+                    useDefaultStartPoint = false,
+                    screenEffectAsLeave = WarpScreenEffect.BLACK_FADES_ON,
+                    screenEffectAsEnter = WarpScreenEffect.WHITE_FADES_OFF,
+                    x = 94u,
+                    z = 4u,
+                    direction = 251u,
+                    fineX = -1.0f,
+                    fineY = 20.0f,
+                    fineZ = 1.0f,
+                    useDirection = true,
+                    useFineX = true,
+                    useFineY = true,
+                    useFineZ = true,
+                    bytes = listOf(60, 0, 28, 0, 63, 0, 1, 2, 94, 4, -5, 0, 0, 0, -128, -65, 0, 0, -96, 65, 0, 0, -128, 63, 15, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x02u, 0x00u, 0xFFu, 0x01u, 0x01u, 0x32u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x05u, 0x00u, 0x00u, 0x00u),
+                WarpPlayerDetailed(
+                    warpToMapId = 2u,
+                    useDefaultStartPoint = false,
+                    screenEffectAsLeave = WarpScreenEffect.NONE,
+                    screenEffectAsEnter = WarpScreenEffect.BLACK_FADES_ON,
+                    x = 1u,
+                    z = 50u,
+                    direction = 0u,
+                    fineY = 0.0f,
+                    useDirection = true,
+                    useFineX = false,
+                    useFineY = true,
+                    useFineZ = false,
+                    bytes = listOf(60, 0, 28, 0, 2, 0, -1, 1, 1, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x02u, 0x4Bu, 0x00u, 0x00u, 0x00u, 0x00u, 0x80u, 0x3Fu, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                WarpPlayerDetailed(
+                    warpToMapId = 0u,
+                    useDefaultStartPoint = false,
+                    screenEffectAsLeave = WarpScreenEffect.BLACK_FADES_OFF,
+                    screenEffectAsEnter = WarpScreenEffect.BLACK_FADES_OFF,
+                    x = 2u,
+                    z = 75u,
+                    fineX = 1.0f,
+                    useDirection = false,
+                    useFineX = true,
+                    useFineY = false,
+                    useFineZ = false,
+                    bytes = listOf(60, 0, 28, 0, 0, 0, 0, 0, 2, 75, 0, 0, 0, 0, -128, 63, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x00u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x9Au, 0x99u, 0x19u, 0xBFu, 0x08u, 0x00u, 0x00u, 0x00u),
+                WarpPlayerDetailed(
+                    warpToMapId = 0u,
+                    useDefaultStartPoint = false,
+                    screenEffectAsLeave = WarpScreenEffect.BLACK_FADES_ON,
+                    screenEffectAsEnter = WarpScreenEffect.BLACK_FADES_OFF,
+                    x = 0u,
+                    z = 0u,
+                    fineZ = -0.6f,
+                    useDirection = false,
+                    useFineX = false,
+                    useFineY = false,
+                    useFineZ = true,
+                    bytes = listOf(60, 0, 28, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -102, -103, 25, -65, 8, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x3Fu, 0x00u, 0x02u, 0x02u, 0x63u, 0x63u, 0x17u, 0x01u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
+                WarpPlayerDetailed(
+                    warpToMapId = 63u,
+                    useDefaultStartPoint = false,
+                    screenEffectAsLeave = WarpScreenEffect.WHITE_FADES_OFF,
+                    screenEffectAsEnter = WarpScreenEffect.WHITE_FADES_OFF,
+                    x = 99u,
+                    z = 99u,
+                    direction = 279u,
+                    useDirection = true,
+                    useFineX = false,
+                    useFineY = false,
+                    useFineZ = false,
+                    bytes = listOf(60, 0, 28, 0, 63, 0, 2, 2, 99, 99, 23, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+                )
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = WarpPlayerDetailed.fromByteBuffer(buffer)
+
+            assertSoftly(actual) {
+                actual.shouldBeTypeOf<WarpPlayerDetailed>()
+                actual.warpToMapId shouldBe expected.warpToMapId
+                actual.useDefaultStartPoint shouldBe expected.useDefaultStartPoint
+                actual.screenEffectAsLeave shouldBe expected.screenEffectAsLeave
+                actual.screenEffectAsEnter shouldBe expected.screenEffectAsEnter
+                actual.x shouldBe expected.x
+                actual.z shouldBe expected.z
+                actual.direction shouldBe expected.direction
+                actual.fineX shouldBe (expected.fineX plusOrMinus 0.01f)
+                actual.fineY shouldBe (expected.fineY plusOrMinus 0.01f)
+                actual.fineZ shouldBe (expected.fineZ plusOrMinus 0.01f)
+                actual.useDirection shouldBe expected.useDirection
+                actual.useFineX shouldBe expected.useFineX
+                actual.useFineY shouldBe expected.useFineY
+                actual.useFineZ shouldBe expected.useFineZ
+                actual.bytes shouldBe expected.bytes
+            }
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
+        }
+    }
+
+    context("Warp Player Basic") {
         withData(
             nameFn = { it.b.toString() },
             Tuple2(
@@ -199,9 +338,9 @@ class EvtOperationsTest : FunSpec({
             val buffer = bytes.asBufferLittleEndian()
             val opId = buffer.getUShort()
             val opSize = buffer.getUShort()
-            val actual = bytes.asBufferLittleEndian().parseEvtOperation(0)
+            val actual = WarpPlayerBasic.fromByteBuffer(buffer)
 
-            assertSoftly {
+            assertSoftly(actual) {
                 actual.shouldBeTypeOf<WarpPlayerBasic>()
                 actual.x shouldBe expected.x
                 actual.z shouldBe expected.z
