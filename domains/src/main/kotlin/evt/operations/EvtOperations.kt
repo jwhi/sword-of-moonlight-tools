@@ -84,6 +84,8 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
             opSize = opSize,
             buffer = pageBuffer
         )
+        EvtOpIds.START_TIMER.value -> StartTimer.fromByteBuffer(pageBuffer)
+        EvtOpIds.SET_TIMER_VALUE_IN_COUNTER.value -> SetTimerValueInCounter.fromByteBuffer(pageBuffer)
         EvtOpIds.END.value -> OperationEnd(bytes = pageBuffer.array().toList())
         else -> UnimplementedOperation(
             opId = opId,

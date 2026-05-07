@@ -86,7 +86,8 @@ class AppTest : FunSpec({
                 "RED BOTTLE USE",
                 "Warp Player Extreme",
                 "WARP NPC EXTREME",
-                "Warp Enemy Extreme"
+                "Warp Enemy Extreme",
+                "Timers"
             )
         }
 
@@ -101,19 +102,15 @@ class AppTest : FunSpec({
             }.toMap()
 
             assertSoftly {
-                operations shouldHaveSize 166
-                unimplementedOperations shouldHaveSize 6
+                operations shouldHaveSize 175
+                unimplementedOperations shouldHaveSize 4
                 unimplementedOpIds shouldBe mapOf(
                     27u to 8u,
                     28u to 8u,
-                    42u to 32u,
-                    149u to 8u,
-                    150u to 8u
+                    42u to 32u
                 )
 
                 eventsWithUnimplementedOps shouldBe mapOf(
-                    "Heal Bump" to listOf(149u),
-                    "Timer Enable Bandit" to listOf(150u),
                     "Terminate NPC (2 Bandit)" to listOf(27u),
                     "Terminate Enemy (2 Ooze)" to listOf(28u),
                     "DISPLAY BMP" to listOf(42u, 42u)

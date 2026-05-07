@@ -13,7 +13,9 @@ import com.jwhi.som.domains.evt.operations.IfCounterCondition
 import com.jwhi.som.domains.evt.operations.IfMessagePrompt
 import com.jwhi.som.domains.evt.operations.PlayerParameter
 import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
+import com.jwhi.som.domains.evt.operations.SetTimerValueInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
+import com.jwhi.som.domains.evt.operations.StartTimer
 import com.jwhi.som.domains.evt.operations.WarpEnemy
 import com.jwhi.som.domains.evt.operations.WarpNPC
 import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
@@ -703,6 +705,98 @@ class EvtOperationsTest : FunSpec({
             )
 
             actual shouldBe expected
+        }
+    }
+
+    context("Start Timer") {
+        withData(
+            nameFn = { it.b.timer.toString() },
+            Tuple2(
+                byteArrayFrom(0x95u, 0x00u, 0x08u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u),
+                StartTimer(
+                    timer = 0u,
+                    bytes = listOf(-107, 0, 8, 0, 0, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x95u, 0x00u, 0x08u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
+                StartTimer(
+                    timer = 1u,
+                    bytes = listOf(-107, 0, 8, 0, 1, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x95u, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                StartTimer(
+                    timer = 2u,
+                    bytes = listOf(-107, 0, 8, 0, 2, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x95u, 0x00u, 0x08u, 0x00u, 0x03u, 0x00u, 0x00u, 0x00u),
+                StartTimer(
+                    timer = 3u,
+                    bytes = listOf(-107, 0, 8, 0, 3, 0, 0, 0)
+                )
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = StartTimer.fromByteBuffer(buffer)
+
+            actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
+        }
+    }
+
+    context("Set Timer Value To Counter") {
+        withData(
+            nameFn = { "Timer ${it.b.timer} stored to ${it.b.counterId}" },
+            Tuple2(
+                byteArrayFrom(0x96u, 0x00u, 0x08u, 0x00u, 0x00u, 0x00u, 0x09u, 0x00u),
+                SetTimerValueInCounter(
+                    timer = 0u,
+                    counterId = 9u,
+                    bytes = listOf(-106, 0, 8, 0, 0, 0, 9, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x96u, 0x00u, 0x08u, 0x00u, 0x01u, 0x00u, 0x0Au, 0x00u),
+                SetTimerValueInCounter(
+                    timer = 1u,
+                    counterId = 10u,
+                    bytes = listOf(-106, 0, 8, 0, 1, 0, 10, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x96u, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x0Bu, 0x00u),
+                SetTimerValueInCounter(
+                    timer = 2u,
+                    counterId = 11u,
+                    bytes = listOf(-106, 0, 8, 0, 2, 0, 11, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x96u, 0x00u, 0x08u, 0x00u, 0x03u, 0x00u, 0x0Cu, 0x00u),
+                SetTimerValueInCounter(
+                    timer = 3u,
+                    counterId = 12u,
+                    bytes = listOf(-106, 0, 8, 0, 3, 0, 12, 0)
+                )
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = SetTimerValueInCounter.fromByteBuffer(buffer)
+
+            actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
         }
     }
 })

@@ -22,5 +22,7 @@ enum class EvtOpIds(val value: UShort) {
     END_IF(143u),
     CHANGE_COUNTER(144u),
     CHANGE_PAGE(145u),
+    START_TIMER(149u),
+    SET_TIMER_VALUE_IN_COUNTER(150u),
     END(UShort.MAX_VALUE),
 }
