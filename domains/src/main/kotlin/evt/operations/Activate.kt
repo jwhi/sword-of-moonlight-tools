@@ -1,7 +1,6 @@
 package com.jwhi.som.domains.evt.operations
 
 import com.jwhi.som.domains.evt.EvtOpIds
-import com.jwhi.som.domains.helpers.getUByte
 import com.jwhi.som.domains.helpers.getUShort
 import java.nio.ByteBuffer
 

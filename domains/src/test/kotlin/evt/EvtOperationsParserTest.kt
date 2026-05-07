@@ -16,6 +16,8 @@ import com.jwhi.som.domains.evt.operations.ScreenEffectType
 import com.jwhi.som.domains.evt.operations.SetTimerValueInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
 import com.jwhi.som.domains.evt.operations.StartTimer
+import com.jwhi.som.domains.evt.operations.TerminateEnemy
+import com.jwhi.som.domains.evt.operations.TerminateNPC
 import com.jwhi.som.domains.evt.operations.WarpEnemy
 import com.jwhi.som.domains.evt.operations.WarpNPC
 import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
@@ -101,6 +103,14 @@ class EvtOperationsParserTest : FunSpec({
             Tuple2(
                 byteArrayFrom(0x16u, 0x00u, 0x08u, 0x00u, 0x04u, 0x00u, 0x00u, 0x00u),
                 ActivateItem(itemId = 4u, bytes = listOf(22, 0, 8, 0, 4, 0, 0, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x1Bu, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                TerminateNPC(npcId = 2u, bytes = listOf(27, 0, 8, 0, 2, 0, 0, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x1Cu, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                TerminateEnemy(enemyId = 2u, bytes = listOf(28, 0, 8, 0, 2, 0, 0, 0))
             ),
             Tuple2(
                 byteArrayFrom(0x28, 0x00, 0x08, 0x00, 0x04, 0x01, 0x00, 0x00),

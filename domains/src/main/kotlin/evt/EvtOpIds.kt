@@ -9,6 +9,8 @@ enum class EvtOpIds(val value: UShort) {
     ACTIVATE_NPC(20u),
     ACTIVATE_ENEMY(21u),
     ACTIVATE_ITEM(22u),
+    TERMINATE_NPC(27u),
+    TERMINATE_ENEMY(28u),
     BEGIN_SCREEN_EFFECT(40u),
     END_SCREEN_EFFECT(41u),
     WARP_PLAYER_DETAILED(60u),

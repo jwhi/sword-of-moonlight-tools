@@ -16,6 +16,8 @@ import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.operations.SetTimerValueInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
 import com.jwhi.som.domains.evt.operations.StartTimer
+import com.jwhi.som.domains.evt.operations.TerminateEnemy
+import com.jwhi.som.domains.evt.operations.TerminateNPC
 import com.jwhi.som.domains.evt.operations.WarpEnemy
 import com.jwhi.som.domains.evt.operations.WarpNPC
 import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
@@ -216,6 +218,34 @@ class EvtOperationsTest : FunSpec({
                 is ActivateNPC -> ActivateNPC.fromByteBuffer(buffer)
                 is ActivateEnemy -> ActivateEnemy.fromByteBuffer(buffer)
                 is ActivateItem -> ActivateItem.fromByteBuffer(buffer)
+                else -> {}
+            }
+
+            actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
+        }
+    }
+
+    context("Terminate") {
+        withData(
+            nameFn = { it.b.toString() },
+            Tuple2(
+                byteArrayFrom(0x1Bu, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                TerminateNPC(npcId = 2u, bytes = listOf(27, 0, 8, 0, 2, 0, 0, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x1Cu, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                TerminateEnemy(enemyId = 2u, bytes = listOf(28, 0, 8, 0, 2, 0, 0, 0))
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = when (expected) {
+                is TerminateNPC -> TerminateNPC.fromByteBuffer(buffer)
+                is TerminateEnemy -> TerminateEnemy.fromByteBuffer(buffer)
                 else -> {}
             }
 
