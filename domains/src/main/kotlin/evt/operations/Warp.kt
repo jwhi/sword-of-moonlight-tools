@@ -1,6 +1,7 @@
 package com.jwhi.som.domains.evt.operations
 
 import com.jwhi.som.domains.evt.EvtOpIds
+import com.jwhi.som.domains.helpers.getBooleanFlags
 import com.jwhi.som.domains.helpers.getUByte
 import com.jwhi.som.domains.helpers.getUShort
 import java.nio.ByteBuffer
@@ -79,22 +80,37 @@ data class WarpPlayer(
     override val opSize: UShort = 24u,
     val x: UByte,
     val z: UByte,
-    val direction: UShort,
-    val fineX: Float,
-    val fineY: Float,
-    val fineZ: Float,
+    val direction: UShort = 0u,
+    val fineX: Float = 0f,
+    val fineY: Float = 0f,
+    val fineZ: Float = 0f,
+    val useDirection: Boolean,
+    val useFineX: Boolean,
+    val useFineY: Boolean,
+    val useFineZ: Boolean,
     override val bytes: List<Byte>
 ): EvtOperation {
     companion object {
         fun fromByteBuffer(buffer: ByteBuffer): WarpPlayer {
+            val x = buffer.getUByte()
+            val z = buffer.getUByte()
+            val direction = buffer.getUShort()
+            val fineX = buffer.getFloat()
+            val fineY = buffer.getFloat()
+            val fineZ = buffer.getFloat()
+            val flagsByte = buffer.get()
+            val flags = flagsByte.getBooleanFlags()
             return WarpPlayer(
-                x = buffer.getUByte(),
-                z = buffer.getUByte(),
-                direction = buffer.getUShort(),
-                unimplemented = buffer.getUShort(),
-                fineX = buffer.getFloat(),
-                fineY = buffer.getFloat(),
-                fineZ = buffer.getFloat(),
+                x = x,
+                z = z,
+                direction = direction,
+                fineX = fineX,
+                fineY = fineY,
+                fineZ = fineZ,
+                useDirection = flags[0],
+                useFineX = flags[1],
+                useFineY = flags[2],
+                useFineZ = flags[3],
                 bytes = buffer.array().toList()
             )
         }

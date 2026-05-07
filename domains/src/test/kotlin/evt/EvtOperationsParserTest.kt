@@ -70,10 +70,14 @@ class EvtOperationsParserTest : FunSpec({
                     x = 26u,
                     z = 99u,
                     direction = 40u,
-                    fineX = 0f,
-                    fineY = 0f,
-                    fineZ = 0f,
-                    bytes = listOf()
+                    fineX = 1.0f,
+                    fineY = -20.0f,
+                    fineZ = -0.7f,
+                    useDirection = true,
+                    useFineX = true,
+                    useFineY = true,
+                    useFineZ = true,
+                    bytes = listOf(61, 0, 24, 0, 26, 99, 40, 0, 0, 0, -128, 63, 0, 0, -96, -63, 51, 51, 51, -65, 15, 0, 0, 0)
                 )
             ),
             Tuple2(

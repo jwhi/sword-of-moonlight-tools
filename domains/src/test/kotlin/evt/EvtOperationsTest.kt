@@ -1,28 +1,31 @@
 package evt
 
-import com.jwhi.som.domains.evt.operations.CompareType
-import com.jwhi.som.domains.evt.operations.DisplayMessage
-import com.jwhi.som.domains.evt.operations.DisplayFormattedMessage
 import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.evt.operations.ChangeCounter
 import com.jwhi.som.domains.evt.operations.ChangePlayerParameter
+import com.jwhi.som.domains.evt.operations.CompareType
+import com.jwhi.som.domains.evt.operations.DisplayFormattedMessage
+import com.jwhi.som.domains.evt.operations.DisplayMessage
 import com.jwhi.som.domains.evt.operations.IfCounterCondition
 import com.jwhi.som.domains.evt.operations.IfMessagePrompt
 import com.jwhi.som.domains.evt.operations.PlayerParameter
 import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
+import com.jwhi.som.domains.evt.operations.WarpPlayer
 import com.jwhi.som.domains.evt.operations.WayChanged
+import com.jwhi.som.domains.evt.operations.parseEvtOperation
 import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.byteArrayFrom
 import com.jwhi.som.domains.helpers.getUShort
-import io.kotest.core.Tuple3
-import io.kotest.core.Tuple4
+import io.kotest.assertions.assertSoftly
+import io.kotest.core.Tuple2
 import io.kotest.core.Tuple5
 import io.kotest.core.Tuple6
-import io.kotest.core.Tuple7
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
+import io.kotest.matchers.floats.plusOrMinus
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeTypeOf
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class EvtOperationsTest : FunSpec({
@@ -93,6 +96,128 @@ class EvtOperationsTest : FunSpec({
         actual shouldBe expected
         opId shouldBe expected.opId
         opSize shouldBe expected.opSize
+    }
+
+    context("Warp Player (Basic)") {
+        withData(
+            nameFn = { it.b.toString() },
+            Tuple2(
+                byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x1Au, 0x63u, 0x28u, 0x00u, 0x00u, 0x00u, 0x80u, 0x3Fu, 0x00u, 0x00u, 0xA0u, 0xC1u, 0x33u, 0x33u, 0x33u, 0xBFu, 0x0Fu, 0x00u, 0x00u, 0x00u),
+                WarpPlayer(
+                    x = 26u,
+                    z = 99u,
+                    direction = 40u,
+                    fineX = 1.0f,
+                    fineY = -20.0f,
+                    fineZ = -0.7f,
+                    useDirection = true,
+                    useFineX = true,
+                    useFineY = true,
+                    useFineZ = true,
+                    bytes = listOf(61, 0, 24, 0, 26, 99, 40, 0, 0, 0, -128, 63, 0, 0, -96, -63, 51, 51, 51, -65, 15, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x01u, 0x02u, 0x00u, 0x00u, 0xCDu, 0xCCu, 0xCCu, 0xBEu, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                WarpPlayer(
+                    x = 1u,
+                    z = 2u,
+                    fineX = -0.4f,
+                    useDirection = false,
+                    useFineX = true,
+                    useFineY = false,
+                    useFineZ = false,
+                    bytes = listOf(61, 0, 24, 0, 1, 2, 0, 0, -51, -52, -52, -66, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x01u, 0x02u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0xCDu, 0xCCu, 0x9Cu, 0xC0u, 0x00u, 0x00u, 0x00u, 0x00u, 0x04u, 0x00u, 0x00u, 0x00u),
+                WarpPlayer(
+                    x = 1u,
+                    z = 2u,
+                    fineY = -4.9f,
+                    useDirection = false,
+                    useFineX = false,
+                    useFineY = true,
+                    useFineZ = false,
+                    bytes = listOf(61, 0, 24, 0, 1, 2, 0, 0, 0, 0, 0, 0, -51, -52, -100, -64, 0, 0, 0, 0, 4, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x02u, 0x03u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x67u, 0x66u, 0x66u, 0x3Fu, 0x08u, 0x00u, 0x00u, 0x00u),
+                WarpPlayer(
+                    x = 2u,
+                    z = 3u,
+                    fineZ = 0.9f,
+                    useDirection = false,
+                    useFineX = false,
+                    useFineY = false,
+                    useFineZ = true,
+                    bytes = listOf(61, 0, 24, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 103, 102, 102, 63, 8, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x05u, 0x06u, 0x96u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
+                WarpPlayer(
+                    x = 5u,
+                    z = 6u,
+                    direction = 150u,
+                    useDirection = true,
+                    useFineX = false,
+                    useFineY = false,
+                    useFineZ = false,
+                    bytes = listOf(61, 0, 24, 0, 5, 6, -106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x0Au, 0x0Fu, 0x00u, 0x00u, 0xCDu, 0xCCu, 0xCCu, 0xBEu, 0x9Au, 0x99u, 0x59u, 0x40u, 0x00u, 0x00u, 0x00u, 0x00u, 0x06u, 0x00u, 0x00u, 0x00u),
+                WarpPlayer(
+                    x = 10u,
+                    z = 15u,
+                    fineX = -0.4f,
+                    fineY = 3.4f,
+                    useDirection = false,
+                    useFineX = true,
+                    useFineY = true,
+                    useFineZ = false,
+                    bytes = listOf(61, 0, 24, 0, 10, 15, 0, 0, -51, -52, -52, -66, -102, -103, 89, 64, 0, 0, 0, 0, 6, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x3Du, 0x00u, 0x18u, 0x00u, 0x15u, 0x61u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u),
+                WarpPlayer(
+                    x = 21u,
+                    z = 97u,
+                    useDirection = false,
+                    useFineX = false,
+                    useFineY = false,
+                    useFineZ = false,
+                    bytes = listOf(61, 0, 24, 0, 21, 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                )
+            )
+        ) { (bytes, expected) ->
+            val buffer = bytes.asBufferLittleEndian()
+            val opId = buffer.getUShort()
+            val opSize = buffer.getUShort()
+            val actual = bytes.asBufferLittleEndian().parseEvtOperation(0)
+
+            assertSoftly {
+                actual.shouldBeTypeOf<WarpPlayer>()
+                actual.x shouldBe expected.x
+                actual.z shouldBe expected.z
+                actual.direction shouldBe expected.direction
+                actual.fineX shouldBe (expected.fineX plusOrMinus 0.01f)
+                actual.fineY shouldBe (expected.fineY plusOrMinus 0.01f)
+                actual.fineZ shouldBe (expected.fineZ plusOrMinus 0.01f)
+                actual.useDirection shouldBe expected.useDirection
+                actual.useFineX shouldBe expected.useFineX
+                actual.useFineY shouldBe expected.useFineY
+                actual.useFineZ shouldBe expected.useFineZ
+                actual.bytes shouldBe expected.bytes
+            }
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
+        }
     }
 
     context("Change Player Parameters") {
