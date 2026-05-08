@@ -102,15 +102,11 @@ class AppTest : FunSpec({
             }.toMap()
 
             assertSoftly {
-                operations shouldHaveSize 175
-                unimplementedOperations shouldHaveSize 2
-                unimplementedOpIds shouldBe mapOf(
-                    42u to 32u
-                )
+                operations shouldHaveSize 179
+                unimplementedOperations shouldHaveSize 0
+                unimplementedOpIds shouldBe mapOf()
 
-                eventsWithUnimplementedOps shouldBe mapOf(
-                    "DISPLAY BMP" to listOf(42u, 42u)
-                )
+                eventsWithUnimplementedOps shouldBe mapOf()
             }
         }
 
@@ -169,7 +165,7 @@ class AppTest : FunSpec({
             withClue("PageOperation validation") {
                 assertSoftly(basicIfDisplayMessage) {
                     val pagePayloadOffset = it.definition.pages[0].payloadOffset
-                    pagePayloadOffset shouldBe 259828u
+                    pagePayloadOffset shouldBe 259904u
 
                     it.definition.pages[0].startCondition shouldBe EvtCondition(
                         compareType = CompareType.NONE,

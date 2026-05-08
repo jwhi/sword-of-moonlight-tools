@@ -55,6 +55,7 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
         EvtOpIds.TERMINATE_ENEMY.value -> TerminateEnemy.fromByteBuffer(pageBuffer)
         EvtOpIds.BEGIN_SCREEN_EFFECT.value -> BeginScreenEffect.fromByteBuffer(pageBuffer)
         EvtOpIds.END_SCREEN_EFFECT.value -> EndScreenEffect.fromByteBuffer(pageBuffer)
+        EvtOpIds.DISPLAY_BMP.value -> DisplayBMP.fromByteBuffer(opSize, pageBuffer)
         EvtOpIds.WARP_PLAYER_DETAILED.value -> WarpPlayerDetailed.fromByteBuffer(pageBuffer)
         EvtOpIds.WARP_PLAYER_BASIC.value -> WarpPlayerBasic.fromByteBuffer(pageBuffer)
         EvtOpIds.CHANGE_PLAYER_PARAMETER.value -> ChangePlayerParameter.fromByteBuffer(pageBuffer)
