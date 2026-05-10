@@ -45,3 +45,10 @@ data class DisplayBMP(
         }
     }
 }
+
+data class DisplayMovie(
+    // 2B 00 20 00 77 61 6C 6B 69 6E 67 2D 61 72 6F 75 6E 64 2D 61 67 61 69 6E 2E 61 76 69 00 00 00 00
+    override val opId: UShort,
+    override val opSize: UShort,
+    override val bytes: List<Byte>
+): EvtOperation
