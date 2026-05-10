@@ -1,5 +1,6 @@
 package evt
 
+import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.evt.operations.ActivateEnemy
 import com.jwhi.som.domains.evt.operations.ActivateItem
 import com.jwhi.som.domains.evt.operations.ActivateNPC
@@ -7,6 +8,7 @@ import com.jwhi.som.domains.evt.operations.BeginScreenEffect
 import com.jwhi.som.domains.evt.operations.ChangePlayerParameter
 import com.jwhi.som.domains.evt.operations.DisplayFormattedMessage
 import com.jwhi.som.domains.evt.operations.DisplayMessage
+import com.jwhi.som.domains.evt.operations.DisplayMovie
 import com.jwhi.som.domains.evt.operations.EndIf
 import com.jwhi.som.domains.evt.operations.OperationEnd
 import com.jwhi.som.domains.evt.operations.Otherwise
@@ -150,6 +152,15 @@ class EvtOperationsParserTest : FunSpec({
                     useFineY = true,
                     useFineZ = true,
                     bytes = listOf(61, 0, 24, 0, 26, 99, 40, 0, 0, 0, -128, 63, 0, 0, -96, -63, 51, 51, 51, -65, 15, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x2Bu,  0x00u,  0x20u,  0x00u,  0x77u,  0x61u,  0x6Cu,  0x6Bu,  0x69u,  0x6Eu,  0x67u,  0x2Du,  0x61u,  0x72u,  0x6Fu,  0x75u,  0x6Eu,  0x64u,  0x2Du,  0x61u,  0x67u,  0x61u,  0x69u,  0x6Eu,  0x2Eu,  0x61u,  0x76u,  0x69u,  0x00u,  0x00u,  0x00u,  0x00u) ,
+                DisplayMovie(
+                    opId = EvtOpIds.DISPLAY_MOVIE.value,
+                    opSize = 32u,
+                    movieFilename = "walking-around-again.avi",
+                    bytes = listOf(43, 0, 32, 0, 119, 97, 108, 107, 105, 110, 103, 45, 97, 114, 111, 117, 110, 100, 45, 97, 103, 97, 105, 110, 46, 97, 118, 105, 0, 0, 0, 0)
                 )
             ),
             Tuple2(

@@ -102,7 +102,7 @@ class AppTest : FunSpec({
             }.toMap()
 
             assertSoftly {
-                operations shouldHaveSize 179
+                operations shouldHaveSize 197
                 unimplementedOperations shouldHaveSize 0
                 unimplementedOpIds shouldBe mapOf()
 
