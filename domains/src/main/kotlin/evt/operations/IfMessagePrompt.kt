@@ -17,7 +17,6 @@ data class IfMessagePrompt(
 
     companion object {
         fun fromByteBuffer(
-            opId: UShort,
             opSize: UShort,
             buffer: ByteBuffer
         ): IfMessagePrompt {
@@ -26,7 +25,6 @@ data class IfMessagePrompt(
             val option1 = buffer.getNullTerminatedString()
             val option2 = buffer.getNullTerminatedString()
             return IfMessagePrompt(
-                opId = opId,
                 opSize = opSize,
                 text = message,
                 option1 = option1,

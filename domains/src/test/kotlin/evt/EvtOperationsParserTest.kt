@@ -146,18 +146,18 @@ class EvtOperationsParserTest : FunSpec({
                 )
             ),
             Tuple2(
-                byteArrayFrom(0u),
-                EndScreenEffect(bytes = listOf())
+                byteArrayFrom(0x29, 0x00, 0x04, 0x00),
+                EndScreenEffect(bytes = listOf(41, 0, 4, 0))
             ),
             Tuple2(
-              byteArrayFrom(0u),
+              byteArrayFrom(0x2Au, 0x00u, 0x24u, 0x00u, 0x01u, 0xFFu, 0x00u, 0x00u, 0x45u, 0x6Cu, 0x66u, 0x20u, 0x61u, 0x6Eu, 0x64u, 0x20u, 0x43u, 0x68u, 0x61u, 0x69u, 0x72u, 0x20u, 0x46u, 0x6Fu, 0x72u, 0x65u, 0x76u, 0x65u, 0x72u, 0x2Eu, 0x62u, 0x6Du, 0x70u, 0x00u, 0x00u, 0x00u),
                 DisplayBMP(
-                    opSize = 0u,
-                    bmpFilename = "",
-                    durationSeconds = 0u,
-                    waitForKeyPress = false,
-                    displayOption = ImageDisplayOptions.FULL_SCREEN_STRETCH,
-                    bytes = listOf()
+                    opSize = 36u,
+                    bmpFilename = "Elf and Chair Forever.bmp",
+                    durationSeconds = 255u,
+                    waitForKeyPress = true,
+                    displayOption = ImageDisplayOptions.FULL_SCREEN_KEEP_RATIO,
+                    bytes = listOf(42, 0, 36, 0, 1, -1, 0, 0, 69, 108, 102, 32, 97, 110, 100, 32, 67, 104, 97, 105, 114, 32, 70, 111, 114, 101, 118, 101, 114, 46, 98, 109, 112, 0, 0, 0)
                 )
             ),
             Tuple2(
@@ -171,26 +171,26 @@ class EvtOperationsParserTest : FunSpec({
             ),
 
             Tuple2(
-                byteArrayFrom(0u),
+                byteArrayFrom(0x2Cu, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
                 PlaySoundEffect(
-                    soundEffectId = 0u,
-                    bytes = listOf()
+                    soundEffectId = 2u,
+                    bytes = listOf(44, 0, 8, 0, 2, 0, 0, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0u),
+                byteArrayFrom(0x2Du, 0x00u, 0x1Cu, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u, 0x65u, 0x78u, 0x61u, 0x6Du, 0x70u, 0x6Cu, 0x65u, 0x2Du, 0x65u, 0x78u, 0x70u, 0x6Cu, 0x6Fu, 0x72u, 0x65u, 0x2Eu, 0x77u, 0x61u, 0x76u, 0x00u),
                 ChangeBGM(
-                    opSize = 0u,
-                    bgmFilename = "",
-                    loop = false,
-                    bytes = listOf()
+                    opSize = 28u,
+                    bgmFilename = "example-explore.wav",
+                    loop = true,
+                    bytes = listOf(45, 0, 28, 0, 1, 0, 0, 0, 101, 120, 97, 109, 112, 108, 101, 45, 101, 120, 112, 108, 111, 114, 101, 46, 119, 97, 118, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0u),
+                byteArrayFrom(0x2Eu, 0x00u, 0x08u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
                 StopPlayBGM(
-                    play = false,
-                    bytes = listOf()
+                    play = true,
+                    bytes = listOf(46, 0, 8, 0, 1, 0, 0, 0)
                 )
             ),
             Tuple2(
@@ -244,48 +244,47 @@ class EvtOperationsParserTest : FunSpec({
                 )
             ),
             Tuple2(
-              byteArrayFrom(0u),
+              byteArrayFrom(0x52u, 0x00u, 0x08u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
                 LearnMagic(
-                    magicTableId = 0u,
-                    bytes = listOf()
+                    magicTableId = 1u,
+                    bytes = listOf(82, 0, 8, 0, 1, 0, 0, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0u),
-                RecoverAll(bytes = listOf())
+                byteArrayFrom(0x53u, 0x00u, 0x04u, 0x00u),
+                RecoverAll(bytes = listOf(83, 0, 4, 0))
             ),
             Tuple2(
-                byteArrayFrom(0u),
+                byteArrayFrom(0x54u, 0x00u, 0x08u, 0x00u, 0x00u, 0x00u, 0x04u, 0x00u),
                 SetPlayerParameterInCounter(
-                    opSize = 0u,
-                    playerParameter = PlayerParameter.GOLD_AMOUNT,
-                    targetCounter = 0u,
+                    playerParameter = PlayerParameter.HP,
                     itemId = 0u,
-                    bytes = listOf()
+                    targetCounter = 4u,
+                    bytes = listOf(84, 0, 8, 0, 0, 0, 4, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0u),
+                byteArrayFrom(0x64u, 0x00u, 0x08u, 0x00u, 0x25u, 0x00u, 0x01u, 0x00u),
                 ObjectAnimation(
-                    objectId = 0u,
-                    play = false,
-                    bytes = listOf()
+                    objectId = 37u,
+                    play = true,
+                    bytes = listOf(100, 0, 8, 0, 37, 0, 1, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0u),
+                byteArrayFrom(0x65u, 0x00u, 0x08u, 0x00u, 0x26u, 0x00u, 0x01u, 0x00u),
                 DisplayObject(
-                    objectId = 0u,
-                    show = false,
-                    bytes = listOf()
+                    objectId = 38u,
+                    show = true,
+                    bytes = listOf(101, 0, 8, 0, 38, 0, 1, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0u),
+                byteArrayFrom(0x78u, 0x00u, 0x08u, 0x00u, 0x01u, 0x01u, 0x00u, 0x00u),
                 ChangeDashSaveTemporarily(
                     target = ChangeTarget.SAVE,
                     enabled = true,
-                    bytes = listOf()
+                    bytes = listOf(120, 0, 8, 0, 1, 1, 0, 0)
                 )
             ),
             Tuple2(
@@ -293,31 +292,31 @@ class EvtOperationsParserTest : FunSpec({
                 SavePoint(bytes = listOf(121, 0, 4, 0))
             ),
             Tuple2(
-                byteArrayFrom(0x00, 0x00, 0x04, 0x00),
+                byteArrayFrom(0x7Au, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
                 EndGame(
                     ending = Ending.ENDING_2,
-                    bytes = listOf()
+                    bytes = listOf(122, 0, 8, 0, 2, 0, 0, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0x00, 0x00, 0x04, 0x00),
+                byteArrayFrom(0x8Cu, 0x00u, 0x0Cu, 0x00u, 0x04u, 0x00u, 0x64u, 0x00u, 0x00u, 0x03u, 0x00u, 0x00u),
                 IfCounterCondition(
-                    opSize = 0u,
-                    counterId = 0u,
-                    value = 0u,
+                    counterId = 4u,
+                    value = 100u,
                     valueIsCounterId = false,
-                    compareType = CompareType.EQUALS,
-                    bytes = listOf()
+                    compareType = CompareType.LESS_THAN,
+                    bytes = listOf(-116, 0, 12, 0, 4, 0, 100, 0, 0, 3, 0, 0)
                 )
             ),
             Tuple2(
-              byteArrayFrom(0x00, 0x00, 0x04, 0x00),
+              byteArrayFrom(0x8Du, 0x00u, 0x44u, 0x00u, 0x4Fu, 0x68u, 0x20u, 0x79u, 0x6Fu, 0x75u, 0x20u, 0x67u, 0x61u, 0x76u, 0x65u, 0x20u, 0x73u, 0x6Fu, 0x6Du, 0x65u, 0x20u, 0x68u, 0x65u, 0x72u, 0x62u, 0x73u, 0x20u, 0x74u, 0x6Fu, 0x20u, 0x74u, 0x68u, 0x61u, 0x74u, 0x20u, 0x0Du, 0x0Au, 0x64u, 0x77u, 0x61u, 0x72u, 0x66u, 0x2Eu, 0x20u, 0x4Du, 0x61u, 0x79u, 0x20u, 0x49u, 0x20u, 0x68u, 0x61u, 0x76u, 0x65u, 0x20u, 0x6Fu, 0x6Eu, 0x65u, 0x3Fu, 0x00u, 0x59u, 0x65u, 0x73u, 0x00u, 0x4Eu, 0x6Fu, 0x00u, 0x00u),
                 IfMessagePrompt(
-                    opSize = 0u,
-                    text = "",
-                    option1 = "",
-                    option2 = "",
-                    bytes = listOf()
+                    opSize = 68u,
+                    text = "Oh you gave some herbs to that \r\n" +
+                        "dwarf. May I have one?",
+                    option1 = "Yes",
+                    option2 = "No",
+                    bytes = listOf(-115, 0, 68, 0, 79, 104, 32, 121, 111, 117, 32, 103, 97, 118, 101, 32, 115, 111, 109, 101, 32, 104, 101, 114, 98, 115, 32, 116, 111, 32, 116, 104, 97, 116, 32, 13, 10, 100, 119, 97, 114, 102, 46, 32, 77, 97, 121, 32, 73, 32, 104, 97, 118, 101, 32, 111, 110, 101, 63, 0, 89, 101, 115, 0, 78, 111, 0, 0)
                 )
             ),
             Tuple2(
@@ -329,31 +328,31 @@ class EvtOperationsParserTest : FunSpec({
                 EndIf(bytes = byteListFrom(0x8F, 0x00, 0x04, 0x00))
             ),
             Tuple2(
-              byteArrayFrom(0x8F, 0x00, 0x04, 0x00),
+              byteArrayFrom(0x90u, 0x00u, 0x0Cu, 0x00u, 0xFCu, 0x03u, 0xFEu, 0x03u, 0x01u, 0x01u, 0x00u, 0x00u),
                 ChangeCounter(
-                    counterId = 0u,
-                    value = 0u,
+                    counterId = 1020u,
+                    value = 1022u,
                     valueIsCounterId = true,
-                    wayChanged = WayChanged.DECREMENT_BY,
-                    bytes = listOf()
+                    wayChanged = WayChanged.INCREMENT_BY,
+                    bytes = listOf(-112, 0, 12, 0, -4, 3, -2, 3, 1, 1, 0, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0x8F, 0x00, 0x04, 0x00),
+                byteArrayFrom(0x91u, 0x00u, 0x08u, 0x00u, 0xFFu, 0xFFu, 0x01u, 0x00u),
                 ChangePage(
-                    target = 0u,
-                    changeType = ChangePageType.FORWARD,
+                    target = 65535u,
+                    changeType = ChangePageType.BACK,
                     changeSpecificId = 0u,
-                    bytes = listOf()
+                    bytes = listOf(-111, 0, 8, 0, -1, -1, 1, 0)
                 )
             ),
             Tuple2(
-                byteArrayFrom(0x8F, 0x00, 0x04, 0x00),
+                byteArrayFrom(0x94u, 0x00u, 0x0Cu, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0xFFu, 0xFFu, 0x10u, 0x00u),
                 GenerateRandomCounterValue(
-                    counterId = 0u,
-                    maxValue = 0u,
+                    counterId = 16u,
+                    maxValue = 65535u,
                     maxValueIsCounterId = false,
-                    bytes = listOf()
+                    bytes = listOf(-108, 0, 12, 0, 0, 0, 0, 0, -1, -1, 16, 0)
                 )
             ),
             Tuple2(
@@ -376,11 +375,11 @@ class EvtOperationsParserTest : FunSpec({
                 OperationEnd(bytes = byteListFrom(0xFF, 0xFF, 0x04, 0x00))
             ),
             Tuple2(
-                byteArrayFrom(0x00, 0x00, 0x04, 0x00),
+                byteArrayFrom(0xFA, 0x00, 0x04, 0x00),
                 UnimplementedOperation(
-                    opId = 0u,
-                    opSize = 0u,
-                    bytes = listOf()
+                    opId = 250u,
+                    opSize = 4u,
+                    bytes = listOf(-6, 0, 4, 0)
                 )
             ),
         ) { (bytes, expected) ->

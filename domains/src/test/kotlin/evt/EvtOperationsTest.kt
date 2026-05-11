@@ -615,13 +615,11 @@ class EvtOperationsTest : FunSpec({
 
             val actualOpId = byteBuffer.getUShort()
             val actualOpSize = byteBuffer.getUShort()
-            val actual = SetPlayerParameterInCounter.fromByteBuffer(
-                actualOpId,
-                actualOpSize,
-                byteBuffer
-            )
+            val actual = SetPlayerParameterInCounter.fromByteBuffer(byteBuffer)
 
             actual shouldBe expected
+            actualOpId shouldBe expected.opId
+            actualOpSize shouldBe expected.opSize
         }
     }
 
@@ -658,13 +656,11 @@ class EvtOperationsTest : FunSpec({
 
             val actualOpId = byteBuffer.getUShort()
             val actualOpSize = byteBuffer.getUShort()
-            val actual = IfCounterCondition.fromByteBuffer(
-                actualOpId,
-                actualOpSize,
-                byteBuffer
-            )
+            val actual = IfCounterCondition.fromByteBuffer(byteBuffer)
 
             actual shouldBe expected
+            actualOpId shouldBe expected.opId
+            actualOpSize shouldBe expected.opSize
         }
     }
 
@@ -684,12 +680,13 @@ class EvtOperationsTest : FunSpec({
         val actualOpId = byteBuffer.getUShort()
         val actualOpSize = byteBuffer.getUShort()
         val actual = IfMessagePrompt.fromByteBuffer(
-            actualOpId,
             actualOpSize,
             byteBuffer,
         )
 
         actual shouldBe expected
+        actualOpId shouldBe expected.opId
+        actualOpSize shouldBe expected.opSize
     }
 
     context("Change Counter from bytes") {
@@ -724,15 +721,13 @@ class EvtOperationsTest : FunSpec({
                 bytes = bytes.toList()
             )
 
-            val actualOpId = byteBuffer.getUShort()
-            val actualOpSize = byteBuffer.getUShort()
-            val actual = ChangeCounter.fromByteBuffer(
-                actualOpId,
-                actualOpSize,
-                byteBuffer
-            )
+            val opId = byteBuffer.getUShort()
+            val opSize = byteBuffer.getUShort()
+            val actual = ChangeCounter.fromByteBuffer(byteBuffer)
 
             actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
         }
     }
 

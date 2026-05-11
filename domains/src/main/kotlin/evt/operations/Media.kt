@@ -17,6 +17,7 @@ enum class ImageDisplayOptions(val value: UByte) {
     }
 }
 
+// 2A 00 24 00 01 FF 00 00 45 6C 66 20 61 6E 64 20 43 68 61 69 72 20 46 6F 72 65 76 65 72 2E 62 6D 70 00 00 00
 data class DisplayBMP(
     override val opId: UShort = EvtOpIds.DISPLAY_BMP.value,
     override val opSize: UShort,

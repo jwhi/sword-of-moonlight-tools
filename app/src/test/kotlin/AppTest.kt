@@ -93,7 +93,11 @@ class AppTest : FunSpec({
                 "Sign BMP",
                 "Warp",
                 "Events",
-                "Stool Event"
+                "Stool Event",
+                "Play Enemy Music",
+                "Bridge BGM Stop",
+                "Bridge Music Change",
+                "Grass Music Begin"
             )
 
             definedEvents.filter { it !in expected } shouldBe emptyList()
@@ -111,7 +115,7 @@ class AppTest : FunSpec({
             }.toMap()
 
             assertSoftly {
-                operations shouldHaveSize 233
+                operations shouldHaveSize 242
                 unimplementedOperations shouldHaveSize 0
                 unimplementedOpIds shouldBe mapOf()
 

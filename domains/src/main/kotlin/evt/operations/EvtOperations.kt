@@ -65,27 +65,15 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
         EvtOpIds.CHANGE_PLAYER_PARAMETER.value -> ChangePlayerParameter.fromByteBuffer(pageBuffer)
         EvtOpIds.LEARN_MAGIC.value -> LearnMagic.fromByteBuffer(pageBuffer)
         EvtOpIds.RECOVER_ALL.value -> RecoverAll(bytes = pageBuffer.array().toList())
-        EvtOpIds.SET_PLAYER_PARAMETER_IN_COUNTER.value -> SetPlayerParameterInCounter.fromByteBuffer(
-            opId = opId,
-            opSize = opSize,
-            buffer = pageBuffer
-        )
+        EvtOpIds.SET_PLAYER_PARAMETER_IN_COUNTER.value -> SetPlayerParameterInCounter.fromByteBuffer(pageBuffer)
         EvtOpIds.OBJECT_ANIMATION_ON_OFF.value -> ObjectAnimation.fromByteBuffer(pageBuffer)
         EvtOpIds.DISPLAY_OBJECT_ON_OFF.value -> DisplayObject.fromByteBuffer(pageBuffer)
         EvtOpIds.MOVE_OBJECT.value -> MoveObject.fromByteBuffer(pageBuffer)
         EvtOpIds.CHANGE_DASH_SAVE_TEMPORARILY.value -> ChangeDashSaveTemporarily.fromByteBuffer(pageBuffer)
         EvtOpIds.SAVE_POINT.value -> SavePoint(bytes = pageBuffer.array().toList())
         EvtOpIds.END_GAME.value -> EndGame.fromByteBuffer(pageBuffer)
-        EvtOpIds.IF_COUNTER_CONDITION.value -> IfCounterCondition.fromByteBuffer(
-            opId = opId,
-            opSize = opSize,
-            buffer = pageBuffer
-        )
-        EvtOpIds.IF_MESSAGE_PROMPT.value -> IfMessagePrompt.fromByteBuffer(
-            opId = opId,
-            opSize = opSize,
-            buffer = pageBuffer
-        )
+        EvtOpIds.IF_COUNTER_CONDITION.value -> IfCounterCondition.fromByteBuffer(buffer = pageBuffer)
+        EvtOpIds.IF_MESSAGE_PROMPT.value -> IfMessagePrompt.fromByteBuffer(opSize = opSize, buffer = pageBuffer)
         EvtOpIds.OTHERWISE.value -> Otherwise(bytes = pageBuffer.array().toList())
         EvtOpIds.END_IF.value -> EndIf(bytes = pageBuffer.array().toList())
         EvtOpIds.CHANGE_COUNTER.value -> ChangeCounter.fromByteBuffer(buffer = pageBuffer)
