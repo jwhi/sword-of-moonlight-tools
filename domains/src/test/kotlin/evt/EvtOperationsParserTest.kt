@@ -1,23 +1,48 @@
 package evt
 
+import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.evt.operations.ActivateEnemy
 import com.jwhi.som.domains.evt.operations.ActivateItem
 import com.jwhi.som.domains.evt.operations.ActivateNPC
 import com.jwhi.som.domains.evt.operations.BeginScreenEffect
+import com.jwhi.som.domains.evt.operations.ChangeBGM
+import com.jwhi.som.domains.evt.operations.ChangeCounter
+import com.jwhi.som.domains.evt.operations.ChangeDashSaveTemporarily
+import com.jwhi.som.domains.evt.operations.ChangePage
+import com.jwhi.som.domains.evt.operations.ChangePageType
 import com.jwhi.som.domains.evt.operations.ChangePlayerParameter
+import com.jwhi.som.domains.evt.operations.ChangeTarget
+import com.jwhi.som.domains.evt.operations.CompareType
+import com.jwhi.som.domains.evt.operations.DisplayBMP
 import com.jwhi.som.domains.evt.operations.DisplayFormattedMessage
 import com.jwhi.som.domains.evt.operations.DisplayMessage
+import com.jwhi.som.domains.evt.operations.DisplayMovie
+import com.jwhi.som.domains.evt.operations.DisplayObject
+import com.jwhi.som.domains.evt.operations.EndGame
 import com.jwhi.som.domains.evt.operations.EndIf
+import com.jwhi.som.domains.evt.operations.EndScreenEffect
+import com.jwhi.som.domains.evt.operations.Ending
+import com.jwhi.som.domains.evt.operations.GenerateRandomCounterValue
+import com.jwhi.som.domains.evt.operations.IfCounterCondition
+import com.jwhi.som.domains.evt.operations.IfMessagePrompt
+import com.jwhi.som.domains.evt.operations.ImageDisplayOptions
+import com.jwhi.som.domains.evt.operations.LearnMagic
+import com.jwhi.som.domains.evt.operations.ObjectAnimation
 import com.jwhi.som.domains.evt.operations.OperationEnd
 import com.jwhi.som.domains.evt.operations.Otherwise
+import com.jwhi.som.domains.evt.operations.PlaySoundEffect
 import com.jwhi.som.domains.evt.operations.PlayerParameter
+import com.jwhi.som.domains.evt.operations.RecoverAll
 import com.jwhi.som.domains.evt.operations.SavePoint
 import com.jwhi.som.domains.evt.operations.ScreenEffectType
+import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.operations.SetTimerValueInCounter
 import com.jwhi.som.domains.evt.operations.ShopOpen
 import com.jwhi.som.domains.evt.operations.StartTimer
+import com.jwhi.som.domains.evt.operations.StopPlayBGM
 import com.jwhi.som.domains.evt.operations.TerminateEnemy
 import com.jwhi.som.domains.evt.operations.TerminateNPC
+import com.jwhi.som.domains.evt.operations.UnimplementedOperation
 import com.jwhi.som.domains.evt.operations.WarpEnemy
 import com.jwhi.som.domains.evt.operations.WarpNPC
 import com.jwhi.som.domains.evt.operations.WarpPlayerBasic
@@ -121,6 +146,54 @@ class EvtOperationsParserTest : FunSpec({
                 )
             ),
             Tuple2(
+                byteArrayFrom(0x29, 0x00, 0x04, 0x00),
+                EndScreenEffect(bytes = listOf(41, 0, 4, 0))
+            ),
+            Tuple2(
+              byteArrayFrom(0x2Au, 0x00u, 0x24u, 0x00u, 0x01u, 0xFFu, 0x00u, 0x00u, 0x45u, 0x6Cu, 0x66u, 0x20u, 0x61u, 0x6Eu, 0x64u, 0x20u, 0x43u, 0x68u, 0x61u, 0x69u, 0x72u, 0x20u, 0x46u, 0x6Fu, 0x72u, 0x65u, 0x76u, 0x65u, 0x72u, 0x2Eu, 0x62u, 0x6Du, 0x70u, 0x00u, 0x00u, 0x00u),
+                DisplayBMP(
+                    opSize = 36u,
+                    bmpFilename = "Elf and Chair Forever.bmp",
+                    durationSeconds = 255u,
+                    waitForKeyPress = true,
+                    displayOption = ImageDisplayOptions.FULL_SCREEN_KEEP_RATIO,
+                    bytes = listOf(42, 0, 36, 0, 1, -1, 0, 0, 69, 108, 102, 32, 97, 110, 100, 32, 67, 104, 97, 105, 114, 32, 70, 111, 114, 101, 118, 101, 114, 46, 98, 109, 112, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x2Bu,  0x00u,  0x20u,  0x00u,  0x77u,  0x61u,  0x6Cu,  0x6Bu,  0x69u,  0x6Eu,  0x67u,  0x2Du,  0x61u,  0x72u,  0x6Fu,  0x75u,  0x6Eu,  0x64u,  0x2Du,  0x61u,  0x67u,  0x61u,  0x69u,  0x6Eu,  0x2Eu,  0x61u,  0x76u,  0x69u,  0x00u,  0x00u,  0x00u,  0x00u) ,
+                DisplayMovie(
+                    opId = EvtOpIds.DISPLAY_MOVIE.value,
+                    opSize = 32u,
+                    movieFilename = "walking-around-again.avi",
+                    bytes = listOf(43, 0, 32, 0, 119, 97, 108, 107, 105, 110, 103, 45, 97, 114, 111, 117, 110, 100, 45, 97, 103, 97, 105, 110, 46, 97, 118, 105, 0, 0, 0, 0)
+                )
+            ),
+
+            Tuple2(
+                byteArrayFrom(0x2Cu, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                PlaySoundEffect(
+                    soundEffectId = 2u,
+                    bytes = listOf(44, 0, 8, 0, 2, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x2Du, 0x00u, 0x1Cu, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u, 0x65u, 0x78u, 0x61u, 0x6Du, 0x70u, 0x6Cu, 0x65u, 0x2Du, 0x65u, 0x78u, 0x70u, 0x6Cu, 0x6Fu, 0x72u, 0x65u, 0x2Eu, 0x77u, 0x61u, 0x76u, 0x00u),
+                ChangeBGM(
+                    opSize = 28u,
+                    bgmFilename = "example-explore.wav",
+                    loop = true,
+                    bytes = listOf(45, 0, 28, 0, 1, 0, 0, 0, 101, 120, 97, 109, 112, 108, 101, 45, 101, 120, 112, 108, 111, 114, 101, 46, 119, 97, 118, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x2Eu, 0x00u, 0x08u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
+                StopPlayBGM(
+                    play = true,
+                    bytes = listOf(46, 0, 8, 0, 1, 0, 0, 0)
+                )
+            ),
+            Tuple2(
                 byteArrayFrom(0x3Cu, 0x00u, 0x1Cu, 0x00u, 0x3Fu, 0x01u, 0xFFu, 0x03u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u),
                 WarpPlayerDetailed(
                     warpToMapId = 63u,
@@ -171,8 +244,80 @@ class EvtOperationsParserTest : FunSpec({
                 )
             ),
             Tuple2(
+              byteArrayFrom(0x52u, 0x00u, 0x08u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
+                LearnMagic(
+                    magicTableId = 1u,
+                    bytes = listOf(82, 0, 8, 0, 1, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x53u, 0x00u, 0x04u, 0x00u),
+                RecoverAll(bytes = listOf(83, 0, 4, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x54u, 0x00u, 0x08u, 0x00u, 0x00u, 0x00u, 0x04u, 0x00u),
+                SetPlayerParameterInCounter(
+                    playerParameter = PlayerParameter.HP,
+                    itemId = 0u,
+                    targetCounter = 4u,
+                    bytes = listOf(84, 0, 8, 0, 0, 0, 4, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x64u, 0x00u, 0x08u, 0x00u, 0x25u, 0x00u, 0x01u, 0x00u),
+                ObjectAnimation(
+                    objectId = 37u,
+                    play = true,
+                    bytes = listOf(100, 0, 8, 0, 37, 0, 1, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x65u, 0x00u, 0x08u, 0x00u, 0x26u, 0x00u, 0x01u, 0x00u),
+                DisplayObject(
+                    objectId = 38u,
+                    show = true,
+                    bytes = listOf(101, 0, 8, 0, 38, 0, 1, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x78u, 0x00u, 0x08u, 0x00u, 0x01u, 0x01u, 0x00u, 0x00u),
+                ChangeDashSaveTemporarily(
+                    target = ChangeTarget.SAVE,
+                    enabled = true,
+                    bytes = listOf(120, 0, 8, 0, 1, 1, 0, 0)
+                )
+            ),
+            Tuple2(
                 byteArrayFrom(0x79, 0x00, 0x04, 0x00),
                 SavePoint(bytes = listOf(121, 0, 4, 0))
+            ),
+            Tuple2(
+                byteArrayFrom(0x7Au, 0x00u, 0x08u, 0x00u, 0x02u, 0x00u, 0x00u, 0x00u),
+                EndGame(
+                    ending = Ending.ENDING_2,
+                    bytes = listOf(122, 0, 8, 0, 2, 0, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x8Cu, 0x00u, 0x0Cu, 0x00u, 0x04u, 0x00u, 0x64u, 0x00u, 0x00u, 0x03u, 0x00u, 0x00u),
+                IfCounterCondition(
+                    counterId = 4u,
+                    value = 100u,
+                    valueIsCounterId = false,
+                    compareType = CompareType.LESS_THAN,
+                    bytes = listOf(-116, 0, 12, 0, 4, 0, 100, 0, 0, 3, 0, 0)
+                )
+            ),
+            Tuple2(
+              byteArrayFrom(0x8Du, 0x00u, 0x44u, 0x00u, 0x4Fu, 0x68u, 0x20u, 0x79u, 0x6Fu, 0x75u, 0x20u, 0x67u, 0x61u, 0x76u, 0x65u, 0x20u, 0x73u, 0x6Fu, 0x6Du, 0x65u, 0x20u, 0x68u, 0x65u, 0x72u, 0x62u, 0x73u, 0x20u, 0x74u, 0x6Fu, 0x20u, 0x74u, 0x68u, 0x61u, 0x74u, 0x20u, 0x0Du, 0x0Au, 0x64u, 0x77u, 0x61u, 0x72u, 0x66u, 0x2Eu, 0x20u, 0x4Du, 0x61u, 0x79u, 0x20u, 0x49u, 0x20u, 0x68u, 0x61u, 0x76u, 0x65u, 0x20u, 0x6Fu, 0x6Eu, 0x65u, 0x3Fu, 0x00u, 0x59u, 0x65u, 0x73u, 0x00u, 0x4Eu, 0x6Fu, 0x00u, 0x00u),
+                IfMessagePrompt(
+                    opSize = 68u,
+                    text = "Oh you gave some herbs to that \r\n" +
+                        "dwarf. May I have one?",
+                    option1 = "Yes",
+                    option2 = "No",
+                    bytes = listOf(-115, 0, 68, 0, 79, 104, 32, 121, 111, 117, 32, 103, 97, 118, 101, 32, 115, 111, 109, 101, 32, 104, 101, 114, 98, 115, 32, 116, 111, 32, 116, 104, 97, 116, 32, 13, 10, 100, 119, 97, 114, 102, 46, 32, 77, 97, 121, 32, 73, 32, 104, 97, 118, 101, 32, 111, 110, 101, 63, 0, 89, 101, 115, 0, 78, 111, 0, 0)
+                )
             ),
             Tuple2(
                 byteArrayFrom(0x8E, 0x00, 0x04, 0x00),
@@ -181,6 +326,34 @@ class EvtOperationsParserTest : FunSpec({
             Tuple2(
                 byteArrayFrom(0x8F, 0x00, 0x04, 0x00),
                 EndIf(bytes = byteListFrom(0x8F, 0x00, 0x04, 0x00))
+            ),
+            Tuple2(
+              byteArrayFrom(0x90u, 0x00u, 0x0Cu, 0x00u, 0xFCu, 0x03u, 0xFEu, 0x03u, 0x01u, 0x01u, 0x00u, 0x00u),
+                ChangeCounter(
+                    counterId = 1020u,
+                    value = 1022u,
+                    valueIsCounterId = true,
+                    wayChanged = WayChanged.INCREMENT_BY,
+                    bytes = listOf(-112, 0, 12, 0, -4, 3, -2, 3, 1, 1, 0, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x91u, 0x00u, 0x08u, 0x00u, 0xFFu, 0xFFu, 0x01u, 0x00u),
+                ChangePage(
+                    target = 65535u,
+                    changeType = ChangePageType.BACK,
+                    changeSpecificId = 0u,
+                    bytes = listOf(-111, 0, 8, 0, -1, -1, 1, 0)
+                )
+            ),
+            Tuple2(
+                byteArrayFrom(0x94u, 0x00u, 0x0Cu, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0xFFu, 0xFFu, 0x10u, 0x00u),
+                GenerateRandomCounterValue(
+                    counterId = 16u,
+                    maxValue = 65535u,
+                    maxValueIsCounterId = false,
+                    bytes = listOf(-108, 0, 12, 0, 0, 0, 0, 0, -1, -1, 16, 0)
+                )
             ),
             Tuple2(
                 byteArrayFrom(0x95u, 0x00u, 0x08u, 0x00u, 0x01u, 0x00u, 0x00u, 0x00u),
@@ -200,7 +373,15 @@ class EvtOperationsParserTest : FunSpec({
             Tuple2(
                 byteArrayFrom( 0xFF, 0xFF, 0x04, 0x00),
                 OperationEnd(bytes = byteListFrom(0xFF, 0xFF, 0x04, 0x00))
-            )
+            ),
+            Tuple2(
+                byteArrayFrom(0xFA, 0x00, 0x04, 0x00),
+                UnimplementedOperation(
+                    opId = 250u,
+                    opSize = 4u,
+                    bytes = listOf(-6, 0, 4, 0)
+                )
+            ),
         ) { (bytes, expected) ->
             val actual = bytes.asBufferLittleEndian().parseEvtOperation(0)
 

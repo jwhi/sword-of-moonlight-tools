@@ -28,7 +28,6 @@ import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.byteArrayFrom
 import com.jwhi.som.domains.helpers.getUShort
 import io.kotest.assertions.assertSoftly
-import io.kotest.assertions.withClue
 import io.kotest.core.Tuple2
 import io.kotest.core.Tuple5
 import io.kotest.core.Tuple6
@@ -37,7 +36,6 @@ import io.kotest.datatest.withData
 import io.kotest.matchers.floats.plusOrMinus
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
-import sun.security.krb5.Confounder.bytes
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class EvtOperationsTest : FunSpec({
@@ -617,13 +615,11 @@ class EvtOperationsTest : FunSpec({
 
             val actualOpId = byteBuffer.getUShort()
             val actualOpSize = byteBuffer.getUShort()
-            val actual = SetPlayerParameterInCounter.fromByteBuffer(
-                actualOpId,
-                actualOpSize,
-                byteBuffer
-            )
+            val actual = SetPlayerParameterInCounter.fromByteBuffer(byteBuffer)
 
             actual shouldBe expected
+            actualOpId shouldBe expected.opId
+            actualOpSize shouldBe expected.opSize
         }
     }
 
@@ -660,13 +656,11 @@ class EvtOperationsTest : FunSpec({
 
             val actualOpId = byteBuffer.getUShort()
             val actualOpSize = byteBuffer.getUShort()
-            val actual = IfCounterCondition.fromByteBuffer(
-                actualOpId,
-                actualOpSize,
-                byteBuffer
-            )
+            val actual = IfCounterCondition.fromByteBuffer(byteBuffer)
 
             actual shouldBe expected
+            actualOpId shouldBe expected.opId
+            actualOpSize shouldBe expected.opSize
         }
     }
 
@@ -686,12 +680,13 @@ class EvtOperationsTest : FunSpec({
         val actualOpId = byteBuffer.getUShort()
         val actualOpSize = byteBuffer.getUShort()
         val actual = IfMessagePrompt.fromByteBuffer(
-            actualOpId,
             actualOpSize,
             byteBuffer,
         )
 
         actual shouldBe expected
+        actualOpId shouldBe expected.opId
+        actualOpSize shouldBe expected.opSize
     }
 
     context("Change Counter from bytes") {
@@ -722,19 +717,17 @@ class EvtOperationsTest : FunSpec({
                 value = value.toUShort(),
                 valueIsCounterId = valueIsCounterId,
                 wayChanged = wayChanged,
-                unimplementedBytes = 0u,
+                unimplemented = 0u,
                 bytes = bytes.toList()
             )
 
-            val actualOpId = byteBuffer.getUShort()
-            val actualOpSize = byteBuffer.getUShort()
-            val actual = ChangeCounter.fromByteBuffer(
-                actualOpId,
-                actualOpSize,
-                byteBuffer
-            )
+            val opId = byteBuffer.getUShort()
+            val opSize = byteBuffer.getUShort()
+            val actual = ChangeCounter.fromByteBuffer(byteBuffer)
 
             actual shouldBe expected
+            opId shouldBe expected.opId
+            opSize shouldBe expected.opSize
         }
     }
 

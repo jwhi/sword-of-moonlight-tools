@@ -66,6 +66,41 @@ data class WarpEnemy(
     }
 }
 
+data class MoveObject(
+    override val opId: UShort = EvtOpIds.MOVE_OBJECT.value,
+    override val opSize: UShort = 28u,
+    val itemId: UShort,
+    val x: UByte,
+    val z: UByte,
+    val angleX: UShort,
+    val angleY: UShort,
+    val angleZ: UShort,
+    // time in 1/10 second
+    val moveTime: UShort,
+    val fineX: Float,
+    val fineY: Float,
+    val fineZ: Float,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(buffer: ByteBuffer): MoveObject {
+            return MoveObject(
+                itemId = buffer.getUShort(),
+                x = buffer.getUByte(),
+                z = buffer.getUByte(),
+                angleX = buffer.getUShort(),
+                angleY = buffer.getUShort(),
+                angleZ = buffer.getUShort(),
+                moveTime = buffer.getUShort(),
+                fineX = buffer.getFloat(),
+                fineY = buffer.getFloat(),
+                fineZ = buffer.getFloat(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
+
 data class WarpPlayer(
     val x: UByte,
     val z: UByte,

@@ -34,8 +34,7 @@ class AppTest : FunSpec({
             val definedEvents = filteredEvents.map {
                 it.definition.name
             }
-
-            definedEvents shouldBe listOf(
+            val expected = listOf(
                 "OPEN MAP",
                 "CLOSE MAP",
                 "PLAYER DEATH",
@@ -87,8 +86,22 @@ class AppTest : FunSpec({
                 "Warp Player Extreme",
                 "WARP NPC EXTREME",
                 "Warp Enemy Extreme",
-                "Timers"
+                "Timers",
+                "Chair",
+                "Play Movie",
+                "Sign",
+                "Sign BMP",
+                "Warp",
+                "Events",
+                "Stool Event",
+                "Play Enemy Music",
+                "Bridge BGM Stop",
+                "Bridge Music Change",
+                "Grass Music Begin"
             )
+
+            definedEvents.filter { it !in expected } shouldBe emptyList()
+            definedEvents shouldBe expected
         }
 
         test("Get all operations and validate they are defined") {
@@ -102,7 +115,7 @@ class AppTest : FunSpec({
             }.toMap()
 
             assertSoftly {
-                operations shouldHaveSize 179
+                operations shouldHaveSize 242
                 unimplementedOperations shouldHaveSize 0
                 unimplementedOpIds shouldBe mapOf()
 
