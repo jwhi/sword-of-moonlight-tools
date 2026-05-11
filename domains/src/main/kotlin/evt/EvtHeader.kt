@@ -94,8 +94,9 @@ enum class TargetType(val value: UByte) {
 // 0x08 = Approach (Circle)
 // 0x10 = Death (Enemy/NPC)
 // 0x20 = Always On
-// 0x40 = Use Item
+// 0x40 = Use Item (Anywhere)
 // 0x00 = None
+// 0x99 = Player Death
 enum class TriggerType(val value: UByte) {
     EXAMINE(0x01u),
     USE_ITEM(0x02u),
@@ -103,8 +104,9 @@ enum class TriggerType(val value: UByte) {
     APPROACH_CIRCLE(0x08u),
     DEATH_ENEMY_NPC(0x10u),
     ALWAYS_ON(0x20u),
-    USE_ITEM_(0x40u),
-    NONE(0xFFu);
+    USE_ITEM_ANYWHERE(0x40u),
+    NONE(0x00u),
+    PLAYER_DEATH(0xFFu);
 
     companion object {
         private val mapping = TriggerType.entries.associateBy { it.value }
