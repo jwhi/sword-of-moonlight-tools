@@ -1,5 +1,6 @@
 package com.jwhi.som.domains.evt.operations
 
+import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.helpers.getUByte
 import com.jwhi.som.domains.helpers.getUShort
 import java.nio.ByteBuffer
@@ -16,9 +17,9 @@ enum class ChangePageType(val value: UByte) {
     }
 }
 data class ChangePage(
-    // opID = 145, opSize = variable
-    override val opId: UShort = 145u,
-    override val opSize: UShort,
+    // opID = 145
+    override val opId: UShort = EvtOpIds.CHANGE_PAGE.value,
+    override val opSize: UShort = 8u,
     // 0x000 -> 0x3FF = other,
     // 0xFFFF = self
     val target: UShort,
@@ -28,13 +29,7 @@ data class ChangePage(
     override val bytes: List<Byte> = emptyList()
 ): EvtOperation {
     companion object {
-        fun fromByteBuffer(
-            opId: UShort,
-            opSize: UShort,
-            buffer: ByteBuffer
-        ) = ChangePage(
-            opId = opId,
-            opSize = opSize,
+        fun fromByteBuffer(buffer: ByteBuffer) = ChangePage(
             target = buffer.getUShort(),
             changeType = ChangePageType.from(buffer.getUByte()),
             changeSpecificId = buffer.getUByte(),

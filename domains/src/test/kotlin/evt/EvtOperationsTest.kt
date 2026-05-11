@@ -28,7 +28,6 @@ import com.jwhi.som.domains.helpers.asBufferLittleEndian
 import com.jwhi.som.domains.helpers.byteArrayFrom
 import com.jwhi.som.domains.helpers.getUShort
 import io.kotest.assertions.assertSoftly
-import io.kotest.assertions.withClue
 import io.kotest.core.Tuple2
 import io.kotest.core.Tuple5
 import io.kotest.core.Tuple6
@@ -37,7 +36,6 @@ import io.kotest.datatest.withData
 import io.kotest.matchers.floats.plusOrMinus
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
-import sun.security.krb5.Confounder.bytes
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class EvtOperationsTest : FunSpec({
@@ -722,7 +720,7 @@ class EvtOperationsTest : FunSpec({
                 value = value.toUShort(),
                 valueIsCounterId = valueIsCounterId,
                 wayChanged = wayChanged,
-                unimplementedBytes = 0u,
+                unimplemented = 0u,
                 bytes = bytes.toList()
             )
 

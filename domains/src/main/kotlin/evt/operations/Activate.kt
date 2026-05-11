@@ -51,3 +51,42 @@ data class ActivateItem(
         }
     }
 }
+
+// 65 00 08 00 26 00 01 00
+// 65 00 08 00 26 00 00 00
+data class DisplayObject(
+    override val opId: UShort = EvtOpIds.DISPLAY_OBJECT_ON_OFF.value,
+    override val opSize: UShort = 8u,
+    val objectId: UShort,
+    val show: Boolean,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(buffer: ByteBuffer): DisplayObject {
+            return DisplayObject(
+                objectId = buffer.getUShort(),
+                show = buffer.getUShort() != 0.toUShort(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
+// 64 00 08 00 25 00 00 00
+// 64 00 08 00 25 00 01 00
+data class ObjectAnimation(
+    override val opId: UShort = EvtOpIds.OBJECT_ANIMATION_ON_OFF.value,
+    override val opSize: UShort = 8u,
+    val objectId: UShort,
+    val play: Boolean,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(buffer: ByteBuffer): ObjectAnimation {
+            return ObjectAnimation(
+                objectId = buffer.getUShort(),
+                play = buffer.getUShort() != 0.toUShort(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}

@@ -63,3 +63,69 @@ data class DisplayMovie(
         }
     }
 }
+
+// 2C 00 08 00 00 00 00 00
+// 2C 00 08 00 00 00 00 00
+// 2C 00 08 00 02 00 00 00
+// 2C 00 08 00 00 00 00 00
+// 2C 00 08 00 01 00 00 00
+data class PlaySoundEffect(
+    override val opId: UShort = EvtOpIds.PLAY_SOUND_EFFECT.value,
+    override val opSize: UShort = 8u,
+    val soundEffectId: UShort,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(buffer: ByteBuffer): PlaySoundEffect {
+            return PlaySoundEffect(
+                soundEffectId = buffer.getUShort(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
+
+// 2D 00 0C 00 00 00 00 00 00 00 00 00
+// 2D 00 0C 00 01 00 00 00 00 00 00 00
+// 2D 00 1C 00 01 00 00 00 65 78 61 6D 70 6C 65 2D 65 78 70 6C 6F 72 65 2E 77 61 76 00
+// 2D 00 20 00 00 00 00 00 65 78 61 6D 70 6C 65 2D 61 6D 62 69 65 6E 63 65 2E 77 61 76 00 00 00 00
+// 2D 00 1C 00 01 00 00 00 65 78 61 6D 70 6C 65 2D 66 69 67 68 74 2E 77 61 76 00 00 00
+data class ChangeBGM(
+    override val opId: UShort = EvtOpIds.CHANGE_BGM.value,
+    override val opSize: UShort,
+    val loop: Boolean,
+    val unimplemented: UShort = 0u,
+    val bgmFilename: String,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(opSize: UShort, buffer: ByteBuffer): ChangeBGM {
+            return ChangeBGM(
+                opSize = opSize,
+                loop = buffer.getUShort() != 0u.toUShort(),
+                unimplemented = buffer.getUShort(),
+                bgmFilename = buffer.getNullTerminatedString(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}
+
+// 2E 00 08 00 00 00 00 00
+// 2E 00 08 00 01 00 00 00
+// 2E 00 08 00 00 00 00 00
+data class StopPlayBGM(
+    override val opId: UShort = EvtOpIds.BGM_ON_OFF.value,
+    override val opSize: UShort = 8u,
+    val play: Boolean,
+    override val bytes: List<Byte>
+): EvtOperation {
+    companion object {
+        fun fromByteBuffer(buffer: ByteBuffer): StopPlayBGM {
+            return StopPlayBGM(
+                play = buffer.getUByte() != 0u.toUByte(),
+                bytes = buffer.array().toList()
+            )
+        }
+    }
+}

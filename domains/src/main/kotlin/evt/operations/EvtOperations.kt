@@ -57,15 +57,21 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
         EvtOpIds.END_SCREEN_EFFECT.value -> EndScreenEffect.fromByteBuffer(pageBuffer)
         EvtOpIds.DISPLAY_BMP.value -> DisplayBMP.fromByteBuffer(opSize, pageBuffer)
         EvtOpIds.DISPLAY_MOVIE.value -> DisplayMovie.fromByteBuffer(opSize, pageBuffer)
+        EvtOpIds.PLAY_SOUND_EFFECT.value -> PlaySoundEffect.fromByteBuffer(pageBuffer)
+        EvtOpIds.CHANGE_BGM.value -> ChangeBGM.fromByteBuffer(opSize, pageBuffer)
+        EvtOpIds.BGM_ON_OFF.value -> StopPlayBGM.fromByteBuffer(pageBuffer)
         EvtOpIds.WARP_PLAYER_DETAILED.value -> WarpPlayerDetailed.fromByteBuffer(pageBuffer)
         EvtOpIds.WARP_PLAYER_BASIC.value -> WarpPlayerBasic.fromByteBuffer(pageBuffer)
         EvtOpIds.CHANGE_PLAYER_PARAMETER.value -> ChangePlayerParameter.fromByteBuffer(pageBuffer)
+        EvtOpIds.LEARN_MAGIC.value -> LearnMagic.fromByteBuffer(pageBuffer)
         EvtOpIds.RECOVER_ALL.value -> RecoverAll(bytes = pageBuffer.array().toList())
         EvtOpIds.SET_PLAYER_PARAMETER_IN_COUNTER.value -> SetPlayerParameterInCounter.fromByteBuffer(
             opId = opId,
             opSize = opSize,
             buffer = pageBuffer
         )
+        EvtOpIds.OBJECT_ANIMATION_ON_OFF.value -> ObjectAnimation.fromByteBuffer(pageBuffer)
+        EvtOpIds.DISPLAY_OBJECT_ON_OFF.value -> DisplayObject.fromByteBuffer(pageBuffer)
         EvtOpIds.MOVE_OBJECT.value -> MoveObject.fromByteBuffer(pageBuffer)
         EvtOpIds.CHANGE_DASH_SAVE_TEMPORARILY.value -> ChangeDashSaveTemporarily.fromByteBuffer(pageBuffer)
         EvtOpIds.SAVE_POINT.value -> SavePoint(bytes = pageBuffer.array().toList())
@@ -82,16 +88,8 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
         )
         EvtOpIds.OTHERWISE.value -> Otherwise(bytes = pageBuffer.array().toList())
         EvtOpIds.END_IF.value -> EndIf(bytes = pageBuffer.array().toList())
-        EvtOpIds.CHANGE_COUNTER.value -> ChangeCounter.fromByteBuffer(
-            opId = opId,
-            opSize = opSize,
-            buffer = pageBuffer
-        )
-        EvtOpIds.CHANGE_PAGE.value -> ChangePage.fromByteBuffer(
-            opId = opId,
-            opSize = opSize,
-            buffer = pageBuffer
-        )
+        EvtOpIds.CHANGE_COUNTER.value -> ChangeCounter.fromByteBuffer(buffer = pageBuffer)
+        EvtOpIds.CHANGE_PAGE.value -> ChangePage.fromByteBuffer(buffer = pageBuffer)
         EvtOpIds.GENERATE_RANDOM_COUNTER_VALUE.value -> GenerateRandomCounterValue.fromByteBuffer(pageBuffer)
         EvtOpIds.START_TIMER.value -> StartTimer.fromByteBuffer(pageBuffer)
         EvtOpIds.SET_TIMER_VALUE_IN_COUNTER.value -> SetTimerValueInCounter.fromByteBuffer(pageBuffer)

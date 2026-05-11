@@ -15,23 +15,17 @@ data class ChangeCounter(
     // when 1 = use value from sourceCounter
     val valueIsCounterId: Boolean,
     val wayChanged: WayChanged,
-    val unimplementedBytes: UShort,
+    val unimplemented: UShort = 0u,
     override val bytes: List<Byte> = emptyList()
 ): EvtOperation {
     companion object {
-        fun fromByteBuffer(
-            opId: UShort,
-            opSize: UShort,
-            buffer: ByteBuffer
-        ): ChangeCounter {
+        fun fromByteBuffer(buffer: ByteBuffer): ChangeCounter {
             return ChangeCounter(
-                opId = opId,
-                opSize = opSize,
                 counterId = buffer.getUShort(),
                 value = buffer.getUShort(),
                 valueIsCounterId = buffer.get() == 0x01.toByte(),
                 wayChanged = WayChanged.from(buffer.getUByte()),
-                unimplementedBytes = buffer.getUShort(),
+                unimplemented = buffer.getUShort(),
                 bytes = buffer.array().toList()
             )
         }

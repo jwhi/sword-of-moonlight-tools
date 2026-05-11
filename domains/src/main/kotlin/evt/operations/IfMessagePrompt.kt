@@ -1,11 +1,12 @@
 package com.jwhi.som.domains.evt.operations
 
+import com.jwhi.som.domains.evt.EvtOpIds
 import com.jwhi.som.domains.helpers.getNullTerminatedString
 import java.nio.ByteBuffer
 
 data class IfMessagePrompt(
     // opID = 141 (-115 signed short) (0x8D 0x00), opSize = variable
-    override val opId: UShort,
+    override val opId: UShort = EvtOpIds.IF_MESSAGE_PROMPT.value,
     override val opSize: UShort,
     // Length is not defined but is null terminated
     val text: String,
