@@ -104,7 +104,7 @@ enum class TriggerType(val value: UByte) {
     DEATH_ENEMY_NPC(0x10u),
     ALWAYS_ON(0x20u),
     USE_ITEM_(0x40u),
-    NONE(0x00u);
+    NONE(0xFFu);
 
     companion object {
         private val mapping = TriggerType.entries.associateBy { it.value }
