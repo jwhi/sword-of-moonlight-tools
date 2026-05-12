@@ -63,6 +63,7 @@ fun ByteBuffer.parseEvtOperation(offset: Int): EvtOperation {
         EvtOpIds.WARP_PLAYER_DETAILED.value -> WarpPlayerDetailed.fromByteBuffer(pageBuffer)
         EvtOpIds.WARP_PLAYER_BASIC.value -> WarpPlayerBasic.fromByteBuffer(pageBuffer)
         EvtOpIds.CHANGE_PLAYER_PARAMETER.value -> ChangePlayerParameter.fromByteBuffer(pageBuffer)
+        EvtOpIds.CHANGE_PLAYER_STATUS.value -> ChangePlayerStatus.fromByteBuffer(pageBuffer)
         EvtOpIds.LEARN_MAGIC.value -> LearnMagic.fromByteBuffer(pageBuffer)
         EvtOpIds.RECOVER_ALL.value -> RecoverAll(bytes = pageBuffer.array().toList())
         EvtOpIds.SET_PLAYER_PARAMETER_IN_COUNTER.value -> SetPlayerParameterInCounter.fromByteBuffer(pageBuffer)
