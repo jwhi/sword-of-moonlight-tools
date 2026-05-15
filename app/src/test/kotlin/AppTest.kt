@@ -1,15 +1,16 @@
 import com.jwhi.som.domains.evt.CompareType
 import com.jwhi.som.domains.evt.ComparisonType
 import com.jwhi.som.domains.evt.EvtCondition
-import com.jwhi.som.domains.evt.operations.DisplayMessage
-import com.jwhi.som.domains.evt.operations.IfMessagePrompt
 import com.jwhi.som.domains.evt.EvtOpIds
-import com.jwhi.som.domains.evt.operations.PlayerParameter
-import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.TargetType
 import com.jwhi.som.domains.evt.TriggerType
+import com.jwhi.som.domains.evt.operations.DisplayMessage
+import com.jwhi.som.domains.evt.operations.IfMessagePrompt
+import com.jwhi.som.domains.evt.operations.PlayerParameter
+import com.jwhi.som.domains.evt.operations.SetPlayerParameterInCounter
 import com.jwhi.som.domains.evt.operations.UnimplementedOperation
 import com.jwhi.som.domains.reader.BinaryBufferReader
+import com.jwhi.som.domains.reader.BinaryReader
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
@@ -25,14 +26,24 @@ class AppTest : FunSpec({
         val filteredEvents = evtEvents.filter {
             it.definition.targetType != TargetType.NONE
         }
+        val evt = BinaryReader.getEvt("/ExampleProject/DATA/MAP/00.evt")
+        val evtFiltered = evt.definitions().filter {
+            (it?.targetType() ?: TargetType.NONE) != TargetType.NONE &&
+                it?.name()?.isNotEmpty() ?: false
+        }
+        val sysDat = BinaryReader.getSys("/ExampleProject/PARAM/SYS.DAT")
 
         test("Event length") {
             evtEvents.size shouldBe 251
+            evt.definitions() shouldHaveSize 1024
         }
 
         test("Defined events") {
             val definedEvents = filteredEvents.map {
                 it.definition.name
+            }
+            val definedEvtEvents = evtFiltered.mapNotNull {
+                it?.name()
             }
             val expected = listOf(
                 "OPEN MAP",
@@ -99,9 +110,36 @@ class AppTest : FunSpec({
                 "Bridge Music Change",
                 "Grass Music Begin"
             )
+            definedEvtEvents shouldBe definedEvents
 
             definedEvents.filter { it !in expected } shouldBe emptyList()
             definedEvents shouldBe expected
+        }
+
+        test("Verify counter names") {
+            val counters = sysDat.counterNames().toList().mapIndexed {
+                index, counterName -> index to counterName
+            }.filter {
+                it.second?.isNotEmpty() ?: false
+            }.toMap()
+
+            counters shouldBe mapOf(
+                4 to "Player Health",
+                6 to "Player Strength",
+                7 to "Player Magic",
+                9 to "Timer 0",
+                10 to "Timer 1",
+                11 to "Timer 2",
+                12 to "Timer 3",
+                15 to "Random Counter 1",
+                16 to "Random 2",
+                240 to "RED BOTTLE COUNT",
+                249 to "EMPTY BOTTLE COUNT",
+                777 to "Man's shop open",
+                876 to "Fed Dwarf Herbs",
+                1020 to "Herbs",
+                1022 to "Antidote Herbs"
+            )
         }
 
         test("Get all operations and validate they are defined") {
@@ -114,10 +152,19 @@ class AppTest : FunSpec({
                 it.second.isNotEmpty()
             }.toMap()
 
+            val evtPages = evtFiltered.mapNotNull { it?.page() }.flatten().filter { it?.body() != null }
+            val evtOperations = evtPages.mapNotNull {
+                it?.body()?.filter {
+                    op -> op?.opId()?.id() in EvtOpIds.entries.map { opId -> opId.value.toLong() }
+                }
+            }.flatten()
+
             assertSoftly {
                 operations shouldHaveSize 242
                 unimplementedOperations shouldHaveSize 0
                 unimplementedOpIds shouldBe mapOf()
+
+                evtOperations shouldHaveSize 242
 
                 eventsWithUnimplementedOps shouldBe mapOf()
             }

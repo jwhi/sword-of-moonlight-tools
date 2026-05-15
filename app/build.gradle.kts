@@ -10,8 +10,7 @@ plugins {
 
 dependencies {
     implementation(project(":domains"))
-    implementation(libs.kotlinx.serialization.core)
-
+    implementation(libs.kaitai.structs)
     testImplementation(libs.bundles.kotest)
 }
 
